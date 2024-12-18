@@ -44,7 +44,7 @@ export interface SubInitiative {
 export interface MapMarker {
   id: number;
   name: string;
-  lat: number;
-  lng: number;
-  score: number;
+  coordinates: [number, number];
+  type: 'hurricane' | 'heatwave' | 'drought';
+  score?: number;
 }

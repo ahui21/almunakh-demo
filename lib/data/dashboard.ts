@@ -93,7 +93,25 @@ export const initiatives: DashboardInitiative[] = [
 ];
 
 export const mapMarkers: MapMarker[] = [
-  { name: "Hurricane Sandy", coordinates: [-74.006, 40.7128], type: "hurricane" },
-  { name: "Heat Wave", coordinates: [2.3522, 48.8566], type: "heatwave" },
-  { name: "Drought", coordinates: [138.2529, -34.9285], type: "drought" },
+  { 
+    id: 1,
+    name: "Hurricane Sandy", 
+    coordinates: [-74.006, 40.7128], 
+    type: "hurricane",
+    score: 85
+  },
+  { 
+    id: 2,
+    name: "Heat Wave", 
+    coordinates: [2.3522, 48.8566], 
+    type: "heatwave",
+    score: 78
+  },
+  { 
+    id: 3,
+    name: "Drought", 
+    coordinates: [138.2529, -34.9285], 
+    type: "drought",
+    score: 65
+  },
 ];
