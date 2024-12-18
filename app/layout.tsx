@@ -5,7 +5,6 @@ import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
 import 'leaflet/dist/leaflet.css';
 import { Toaster } from "@/components/ui/toaster";
-import { useState } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
 
