@@ -30,7 +30,7 @@ export function PremiumOverlay({ isOpen, onClose }: PremiumOverlayProps) {
         <div className="text-center">
           <h3 className="text-lg font-semibold mb-2">Premium Feature</h3>
           <p className="text-gray-600 mb-6">
-            Sorry, this view is only available to our premium plan users. Please contact us if you'd like to upgrade!
+            Sorry, this view is only available to our premium plan users. Please contact us if you&apos;d like to upgrade!
           </p>
           <div className="flex justify-center gap-4">
             <Button variant="outline" onClick={onClose}>
