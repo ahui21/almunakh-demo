@@ -6,7 +6,11 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import 'leaflet/dist/leaflet.css';
 import { Toaster } from "@/components/ui/toaster";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter'
+});
 
 export const metadata: Metadata = {
   title: 'Almunakh - Climate Impact Dashboard',
@@ -20,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className} antialiased`}>
         <div className="flex h-screen">
           <Sidebar />
           <div className="flex-1 flex flex-col ml-60">

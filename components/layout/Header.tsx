@@ -18,10 +18,10 @@ export function Header() {
     <header className="h-16 border-b bg-white flex items-center justify-between px-6">
       {/* Search Section */}
       <div className="relative w-96">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input 
           placeholder="Search..." 
-          className="pl-10 w-full bg-gray-50 border-0 focus-visible:ring-1"
+          className="pl-10 w-full bg-gray-50 border-0 focus-visible:ring-1 text-sm"
         />
       </div>
 

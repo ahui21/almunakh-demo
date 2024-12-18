@@ -108,7 +108,7 @@ export function Sidebar() {
 
   return (
     <>
-      <aside className="fixed left-0 top-0 w-60 h-screen bg-primary text-primary-foreground border-r border-primary/20 flex flex-col">
+      <aside className="fixed left-0 top-0 w-60 h-screen bg-primary text-white flex flex-col">
         <div className="p-6">
           <h1 className="text-3xl font-extrabold tracking-tight">Almunakh</h1>
           <p className="text-sm text-primary-foreground/70">Climate Impact Dashboard</p>
@@ -127,7 +127,7 @@ export function Sidebar() {
 
         {/* Settings Section */}
         <div className="p-4 border-t border-primary-foreground/10">
-          <h2 className="text-sm font-semibold text-primary-foreground/70 px-4 mb-2">Settings</h2>
+          <h2 className="text-sm font-semibold text-primary-foreground/70 mb-2">Settings</h2>
           <ul className="space-y-1">
             {settingsLinks.map((link) => (
               <li key={link.name}>
