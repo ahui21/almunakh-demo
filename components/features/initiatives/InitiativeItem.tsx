@@ -6,25 +6,15 @@ import { Initiative } from '@/lib/types/dashboard';
 import { ProgressBar } from './ProgressBar';
 import { StatusBadge } from './StatusBadge';
 
-interface InitiativeItemProps {
-  initiative: Initiative;
-  isOpen: boolean;
-  onToggle: () => void;
-}
-
-export function InitiativeItem({ initiative, isOpen, onToggle }: InitiativeItemProps) {
+export function InitiativeItem({ initiative }: { initiative: Initiative }) {
   return (
-    <Collapsible open={isOpen} onOpenChange={onToggle}>
+    <Collapsible>
       <CollapsibleTrigger className="w-full">
         <div className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
           <div className="flex-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                {isOpen ? (
-                  <ChevronUp className="w-4 h-4 text-gray-500" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
-                )}
+                <ChevronDown className="w-4 h-4 text-gray-500" />
                 <h4 className="text-sm font-medium">{initiative.name}</h4>
               </div>
               <div className="flex items-center gap-3">
@@ -47,8 +37,11 @@ export function InitiativeItem({ initiative, isOpen, onToggle }: InitiativeItemP
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">{task.name}</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <ProgressBar progress={task.progress} size="sm" />
+                <div className="flex items-center gap-4">
+                  <div className="w-32">
+                    <ProgressBar progress={task.progress} />
+                  </div>
+                  {task.status && <StatusBadge status={task.status} />}
                 </div>
               </div>
             </div>

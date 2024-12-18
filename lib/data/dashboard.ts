@@ -33,6 +33,20 @@ export const initiatives: DashboardInitiative[] = [
     progress: 75,
     dueDate: '2024-06-15',
     poc: 'John Doe',
+    tasks: [
+      {
+        id: 1,
+        name: 'Data Collection',
+        progress: 100,
+        status: 'Completed'
+      },
+      {
+        id: 2,
+        name: 'Analysis',
+        progress: 60,
+        status: 'In Progress'
+      }
+    ],
     subInitiatives: [
       {
         id: 1,
