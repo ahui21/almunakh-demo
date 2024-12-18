@@ -47,7 +47,7 @@ export function InitiativesTracker({ className }: InitiativesTrackerProps) {
           {filteredInitiatives.map((initiative) => (
             <div key={initiative.id} className="space-y-2">
               {/* Main Initiative Row */}
-              <div 
+              <div
                 className="grid grid-cols-12 gap-4 items-center cursor-pointer hover:bg-gray-50 rounded-md p-2"
                 onClick={() => toggleInitiative(initiative.id)}
               >

@@ -4,7 +4,7 @@ import type { Location, Risk, Initiative as DashboardInitiative, MapMarker } fro
 interface SubInitiative {
   id: number;
   name: string;
-  status: 'In Progress' | 'Completed' | 'Planned';
+  status: 'In Progress' | 'Completed' | 'Planning';
   progress: number;
   dueDate: string;
   poc: string;
@@ -53,7 +53,7 @@ export const initiatives: DashboardInitiative[] = [
       {
         id: 3,
         name: 'Report Generation',
-        status: 'Planned',
+        status: 'Planning',
         progress: 20,
         dueDate: '2024-06-10',
         poc: 'Emily Brown'
@@ -63,7 +63,7 @@ export const initiatives: DashboardInitiative[] = [
   {
     id: 2,
     name: 'Waste Reduction Program',
-    status: 'Planned',
+    status: 'Planning',
     progress: 25,
     dueDate: '2024-07-30',
     poc: 'Jane Doe'

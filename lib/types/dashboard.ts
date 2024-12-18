@@ -23,7 +23,7 @@ export interface Task {
 export interface Initiative {
   id: number;
   name: string;
-  status: 'In Progress' | 'Completed' | 'Planned';
+  status: 'In Progress' | 'Completed' | 'Planning';
   progress: number;
   dueDate: string;
   poc: string;
@@ -33,7 +33,7 @@ export interface Initiative {
 export interface SubInitiative {
   id: number;
   name: string;
-  status: 'In Progress' | 'Completed' | 'Planned';
+  status: 'In Progress' | 'Completed' | 'Planning';
   progress: number;
   dueDate: string;
   poc: string;
