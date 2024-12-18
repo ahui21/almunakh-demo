@@ -1,6 +1,6 @@
 'use client';
 
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { memo } from 'react';
 import { CardHeader } from '@/components/features/shared/CardHeader';
@@ -19,8 +19,8 @@ function RiskScoreCardComponent({ className }: RiskScoreCardProps) {
       <div className="flex flex-col items-center justify-center">
         <div className="text-8xl font-bold text-center text-[#DF2935]">{score}</div>
         <div className="mt-4 flex items-center gap-2 text-xl text-[#069D27]">
-          <TrendingUp className="w-7 h-7" />
-          <span>+7.35% from last week</span>
+          <TrendingDown className="w-7 h-7" />
+          <span>-7.35% from last week</span>
         </div>
       </div>
     </Card>
