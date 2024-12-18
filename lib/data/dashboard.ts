@@ -6,6 +6,8 @@ interface SubInitiative {
   name: string;
   status: 'In Progress' | 'Completed' | 'Planned';
   progress: number;
+  dueDate: string;
+  poc: string;
 }
 
 export const locations: Location[] = [
@@ -51,7 +53,7 @@ export const initiatives: DashboardInitiative[] = [
       {
         id: 3,
         name: 'Report Generation',
-        status: 'Planning',
+        status: 'Planned',
         progress: 20,
         dueDate: '2024-06-10',
         poc: 'Emily Brown'
@@ -61,7 +63,7 @@ export const initiatives: DashboardInitiative[] = [
   {
     id: 2,
     name: 'Waste Reduction Program',
-    status: 'Planning',
+    status: 'Planned',
     progress: 25,
     dueDate: '2024-07-30',
     poc: 'Jane Doe'

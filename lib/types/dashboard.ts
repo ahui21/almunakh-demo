@@ -25,6 +25,8 @@ export interface Initiative {
   name: string;
   status: 'In Progress' | 'Completed' | 'Planned';
   progress: number;
+  dueDate: string;
+  poc: string;
   subInitiatives?: SubInitiative[];
 }
 
@@ -33,6 +35,8 @@ export interface SubInitiative {
   name: string;
   status: 'In Progress' | 'Completed' | 'Planned';
   progress: number;
+  dueDate: string;
+  poc: string;
 }
 
 export interface MapMarker {
