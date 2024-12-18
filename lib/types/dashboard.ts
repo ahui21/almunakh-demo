@@ -10,8 +10,9 @@ export interface Location {
 export interface Risk {
   id: number;
   name: string;
-  level: 'High' | 'Medium' | 'Low';
-  impact: number;
+  score: number;
+  trend: 'up' | 'down';
+  icon: LucideIcon;
 }
 
 export interface Task {

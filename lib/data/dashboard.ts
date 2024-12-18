@@ -11,18 +11,18 @@ interface SubInitiative {
 }
 
 export const locations: Location[] = [
-  { name: 'New York', score: 85, trend: 'up' },
-  { name: 'Los Angeles', score: 78, trend: 'down' },
-  { name: 'Miami', score: 92, trend: 'up' },
-  { name: 'Chicago', score: 75, trend: 'down' },
-  { name: 'Houston', score: 88, trend: 'up' },
+  { id: 1, name: 'New York', score: 85, trend: 'up' },
+  { id: 2, name: 'Los Angeles', score: 78, trend: 'down' },
+  { id: 3, name: 'Miami', score: 92, trend: 'up' },
+  { id: 4, name: 'Chicago', score: 75, trend: 'down' },
+  { id: 5, name: 'Houston', score: 88, trend: 'up' },
 ];
 
 export const risks: Risk[] = [
-  { name: 'Wildfire', score: 85, trend: 'up', icon: Flame },
-  { name: 'Flooding', score: 78, trend: 'down', icon: Droplets },
-  { name: 'Hurricanes', score: 72, trend: 'up', icon: Wind },
-  { name: 'Power Outages', score: 65, trend: 'down', icon: Zap },
+  { id: 1, name: 'Wildfire', score: 85, trend: 'up', icon: Flame },
+  { id: 2, name: 'Flooding', score: 78, trend: 'down', icon: Droplets },
+  { id: 3, name: 'Hurricanes', score: 72, trend: 'up', icon: Wind },
+  { id: 4, name: 'Power Outages', score: 65, trend: 'down', icon: Zap },
 ];
 
 export const initiatives: DashboardInitiative[] = [
