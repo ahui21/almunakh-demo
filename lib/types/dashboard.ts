@@ -1,16 +1,17 @@
 import { LucideIcon } from 'lucide-react';
 
 export interface Location {
+  id: number;
   name: string;
   score: number;
   trend: 'up' | 'down';
 }
 
 export interface Risk {
+  id: number;
   name: string;
-  score: number;
-  icon: LucideIcon;
-  trend?: 'up' | 'down';
+  level: 'High' | 'Medium' | 'Low';
+  impact: number;
 }
 
 export interface Task {
@@ -22,14 +23,22 @@ export interface Task {
 export interface Initiative {
   id: number;
   name: string;
-  status: 'In Progress' | 'Planning' | 'Completed';
+  status: 'In Progress' | 'Completed' | 'Planned';
   progress: number;
-  dueDate: string;
-  tasks?: Task[];
+  subInitiatives?: SubInitiative[];
+}
+
+export interface SubInitiative {
+  id: number;
+  name: string;
+  status: 'In Progress' | 'Completed' | 'Planned';
+  progress: number;
 }
 
 export interface MapMarker {
+  id: number;
   name: string;
-  coordinates: [number, number];
-  type: 'hurricane' | 'heatwave' | 'drought';
+  lat: number;
+  lng: number;
+  score: number;
 }

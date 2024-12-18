@@ -1,23 +1,11 @@
 import { Flame, Droplets, Wind, Zap } from 'lucide-react';
-import type { Location, Risk, Initiative, MapMarker } from '../types/dashboard';
+import type { Location, Risk, Initiative as DashboardInitiative, MapMarker } from '../types/dashboard';
 
 interface SubInitiative {
   id: number;
   name: string;
-  status: 'Planning' | 'In Progress' | 'Completed';
+  status: 'In Progress' | 'Completed' | 'Planned';
   progress: number;
-  dueDate: string;
-  poc: string;
-}
-
-interface Initiative {
-  id: number;
-  name: string;
-  status: 'Planning' | 'In Progress' | 'Completed';
-  progress: number;
-  dueDate: string;
-  poc: string;
-  subInitiatives?: SubInitiative[];
 }
 
 export const locations: Location[] = [
@@ -35,7 +23,7 @@ export const risks: Risk[] = [
   { name: 'Power Outages', score: 65, trend: 'down', icon: Zap },
 ];
 
-export const initiatives: Initiative[] = [
+export const initiatives: DashboardInitiative[] = [
   {
     id: 1,
     name: 'Climate Risk Assessment',
