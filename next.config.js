@@ -1,22 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  images: { 
+  images: {
     unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'picsum.photos',
-      },
-    ],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  transpilePackages: ['react-leaflet']
-};
+  basePath: process.env.NODE_ENV === 'production' ? '/almunakh' : '',
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig

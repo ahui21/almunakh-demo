@@ -14,12 +14,15 @@ const locations = [
 ];
 
 export function TopLocations({ className }: { className?: string }) {
+  // Sort locations by score in descending order
+  const sortedLocations = [...locations].sort((a, b) => b.score - a.score);
+
   return (
     <Card className={cn("p-6", className)}>
       <CardHeader title="Top Locations" />
       <div className="h-[calc(100%-2rem)] overflow-y-auto pr-2">
         <div className="space-y-4">
-          {locations.map((location) => (
+          {sortedLocations.map((location) => (
             <div key={location.name} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <MapPin className="w-5 h-5 text-gray-500" />
