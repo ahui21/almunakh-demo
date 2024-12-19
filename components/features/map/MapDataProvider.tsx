@@ -70,7 +70,7 @@ async function getData(): Promise<CountryData[]> {
               year: Number(record.Year) || new Date().getFullYear()
             };
           })
-          .filter((record): record is NonNullable<ProcessedRecord> => {
+          .filter((record: ProcessedRecord): record is NonNullable<ProcessedRecord> => {
             return record !== null && !isNaN(record.scores['World Risk Index']);
           });
 
