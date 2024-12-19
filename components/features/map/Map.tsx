@@ -6,13 +6,18 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './map.css';
 import type { MapMarker } from '@/lib/types/dashboard';
 
+// Extend Popup type to include our custom property
+type CustomPopup = mapboxgl.Popup & {
+  marker_id?: number;
+};
+
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
 
 export default function Map({ markers }: { markers: MapMarker[] }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<{ [key: number]: mapboxgl.Marker }>({});
-  const activePopup = useRef<mapboxgl.Popup | null>(null);
+  const activePopup = useRef<CustomPopup | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current || !mapboxgl.accessToken) return;
@@ -72,7 +77,7 @@ export default function Map({ markers }: { markers: MapMarker[] }) {
             closeButton: false,
             className: 'custom-popup',
             anchor: 'bottom'
-          });
+          }) as CustomPopup;
 
           // Add marker_id to popup for identification
           popup.marker_id = marker.id;
