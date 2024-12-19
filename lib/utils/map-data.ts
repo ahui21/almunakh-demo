@@ -1,7 +1,5 @@
-import { parse } from 'csv-parse/sync';
 import type { RiskMetric, CountryData } from '@/lib/types/dashboard';
-
-const unmappedCountries = new Set<string>();
+import { logger } from './logger';
 
 interface CSVRecord {
   country: string;
@@ -19,15 +17,46 @@ type ProcessedRecord = {
   year: number;
 } | null;
 
-export async function processMapData(data: string[], selectedMetric: RiskMetric): Promise<CountryData[]> {
+class MapDataError extends Error {
+  constructor(
+    message: string,
+    public code: string,
+    public details?: unknown
+  ) {
+    super(message);
+    this.name = 'MapDataError';
+  }
+}
+
+export async function processMapData(
+  data: string[], 
+  selectedMetric: RiskMetric
+): Promise<CountryData[]> {
   try {
+    if (!data || data.length === 0) {
+      throw new MapDataError('No data provided', 'NO_DATA');
+    }
+
     const headers = data[0].split(',').map(header => header.trim());
     const rows = data.slice(1);
 
-    return rows
-      .map((row): ProcessedRecord => {
+    if (!headers.includes(selectedMetric)) {
+      throw new MapDataError(
+        `Invalid metric: ${selectedMetric}`, 
+        'INVALID_METRIC',
+        { availableMetrics: headers }
+      );
+    }
+
+    const processedRecords = rows
+      .map((row, index): ProcessedRecord => {
         try {
           const values = row.split(',').map(val => val.trim());
+          if (values.length !== headers.length) {
+            logger.warn(`Row ${index + 1} has incorrect number of columns`);
+            return null;
+          }
+
           const [
             country,
             wri, 
@@ -51,16 +80,16 @@ export async function processMapData(data: string[], selectedMetric: RiskMetric)
           // Validate scores
           Object.entries(scores).forEach(([field, score]) => {
             if (isNaN(score)) {
-              throw new Error(`Invalid ${field} score: not a number (value: ${values[headers.indexOf(field)]})`);
+              throw new Error(`Invalid ${field} score: not a number`);
             }
             if (score < 0 || score > 100) {
-              throw new Error(`Invalid ${field} score: must be between 0 and 100 (value: ${score})`);
+              throw new Error(`Invalid ${field} score: must be between 0 and 100`);
             }
           });
 
           const yearNum = parseInt(year);
           if (isNaN(yearNum)) {
-            throw new Error(`Invalid year: not a number (value: ${year})`);
+            throw new Error(`Invalid year: not a number`);
           }
 
           return {
@@ -69,15 +98,31 @@ export async function processMapData(data: string[], selectedMetric: RiskMetric)
             year: yearNum
           };
         } catch (err) {
-          console.warn('Failed to process row:', row, err);
+          logger.warn(`Failed to process row ${index + 1}:`, err);
           return null;
         }
       })
       .filter((record: ProcessedRecord): record is NonNullable<ProcessedRecord> => {
         return record !== null && !isNaN(record.scores[selectedMetric]);
       });
+
+    if (processedRecords.length === 0) {
+      throw new MapDataError(
+        'No valid records found after processing',
+        'NO_VALID_RECORDS'
+      );
+    }
+
+    return processedRecords;
   } catch (error) {
-    console.error('Error processing map data:', error);
-    return [];
+    if (error instanceof MapDataError) {
+      throw error;
+    }
+    logger.error('Error processing map data:', error);
+    throw new MapDataError(
+      'Failed to process map data',
+      'PROCESSING_ERROR',
+      error
+    );
   }
 } 
