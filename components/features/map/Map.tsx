@@ -479,6 +479,14 @@ export default function MapComponent(props?: MapProps) {
     }
   };
 
+  const handleMarkerClick = useCallback((e: mapboxgl.MapMouseEvent & { features?: mapboxgl.MapboxGeoJSONFeature[] }) => {
+    // ... existing code
+  }, []);
+
+  const handleMapLoad = useCallback((e: mapboxgl.MapboxEvent) => {
+    // ... existing code
+  }, []);
+
   return (
     <div 
       ref={mapContainer} 

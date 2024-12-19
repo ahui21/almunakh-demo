@@ -62,8 +62,8 @@ export async function fetchMapData(metric: RiskMetric): Promise<CountryData[]> {
         mapDataCache.set('worldRiskData', data, metric);
         return data;
 
-      } catch (error) {
-        lastError = error as Error;
+      } catch (error: unknown) {
+        lastError = error instanceof Error ? error : new Error(String(error));
         console.error(`Attempt ${attempt} failed:`, error);
         
         if (error instanceof MapDataError) {
@@ -86,7 +86,7 @@ export async function fetchMapData(metric: RiskMetric): Promise<CountryData[]> {
         attempts: MAX_RETRIES 
       }
     );
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Top-level error in fetchMapData:', error);
     throw error;
   }

@@ -9,14 +9,12 @@ import {
 } from "@/components/ui/select";
 import type { RiskMetric } from '@/lib/types/dashboard';
 
-interface MetricSelectorProps {
-  selectedMetric: RiskMetric;
-  onMetricChange: (metric: RiskMetric) => void;
-}
-
-export function MetricSelector({ selectedMetric, onMetricChange }: MetricSelectorProps) {
+export function MetricSelector({ value, onValueChange }: { 
+  value: RiskMetric; 
+  onValueChange: (value: RiskMetric) => void;
+}) {
   return (
-    <Select value={selectedMetric} onValueChange={onMetricChange}>
+    <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className="w-[280px] bg-white">
         <SelectValue placeholder="Select metric" />
       </SelectTrigger>

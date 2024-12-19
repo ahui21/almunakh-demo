@@ -4,6 +4,10 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { logger } from '@/lib/utils/logger';
 
+interface CSVRow {
+  [key: string]: string;
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -54,9 +58,9 @@ export async function GET(request: Request) {
       const countryMap = new Map<string, CountryData>();
       const errors: Array<{ row: number; error: string }> = [];
 
-      rows.forEach((row, index) => {
+      rows.forEach((row: string, index: number) => {
         try {
-          const values = row.split(',').map(val => val.trim());
+          const values = row.split(',').map((val: string) => val.trim());
           const [
             country,
             wri, 
@@ -104,10 +108,7 @@ export async function GET(request: Request) {
             countryMap.set(countryCode, data);
           }
         } catch (err) {
-          errors.push({ 
-            row: index + 2, 
-            error: err instanceof Error ? err.message : String(err)
-          });
+          console.warn(`Failed to process row ${index}:`, err);
         }
       });
 
