@@ -3,19 +3,17 @@
 import { Marker } from 'react-simple-maps';
 import type { MapMarker } from '@/lib/types/dashboard';
 
-interface MapMarkersProps {
-  markers: MapMarker[];
+interface MapMarkerProps {
+  marker: MapMarker;
+  onSelect: (marker: MapMarker) => void;
 }
 
-export function MapMarkers({ markers }: MapMarkersProps) {
+export function MapMarker({ marker, onSelect }: MapMarkerProps) {
+  const { coordinates, score } = marker;
   return (
-    <>
-      {markers.map(({ name, coordinates, type }) => (
-        <Marker key={name} coordinates={coordinates}>
-          <circle r={3} fill="#2D7DD2" />
-          <title>{name}</title>
-        </Marker>
-      ))}
-    </>
+    <Marker key={marker.name} coordinates={coordinates}>
+      <circle r={3} fill="#2D7DD2" />
+      <title>{marker.name}</title>
+    </Marker>
   );
 }

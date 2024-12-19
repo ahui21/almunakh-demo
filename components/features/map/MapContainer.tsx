@@ -10,8 +10,8 @@ interface MapMarkerProps {
   onSelect: (marker: MapMarker) => void;
 }
 
-export function MapMarker({ marker, onSelect }: MapMarkerProps) {
-  const { name, coordinates, score } = marker;
+export function MapMarker({ marker }: MapMarkerProps) {
+  const { name, coordinates } = marker;
   return (
     <Marker key={name} coordinates={coordinates}>
       <circle r={3} fill="#2D7DD2" />

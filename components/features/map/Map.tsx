@@ -266,11 +266,14 @@ export default function MapComponent(props?: MapProps) {
             { hover: false }
           );
         }
-        hoveredStateId.current = e.features[0].id;
-        map.setFeatureState(
-          { source: 'countries', sourceLayer: 'country_boundaries', id: hoveredStateId.current },
-          { hover: true }
-        );
+        const featureId = e.features[0].id;
+        if (featureId !== undefined) {
+          hoveredStateId.current = featureId;
+          map.setFeatureState(
+            { source: 'countries', sourceLayer: 'country_boundaries', id: featureId },
+            { hover: true }
+          );
+        }
 
         const countryName = e.features[0].properties?.name_en;
         const countryData = countryDataRef.current.get(countryName);

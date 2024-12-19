@@ -28,6 +28,14 @@ export function Sidebar() {
     setShowPremiumOverlay(true);
   };
 
+  const handlePremiumFeature = () => {
+    toast({
+      title: "Premium Feature",
+      description: "This feature is only available in the premium version.",
+      variant: "destructive"
+    });
+  };
+
   const mainLinks = [
     {
       name: 'Dashboard',
