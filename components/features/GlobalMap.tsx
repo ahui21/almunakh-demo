@@ -31,8 +31,8 @@ export function GlobalMap({ className }: GlobalMapProps) {
         title="Global Overview" 
         action={
           <MetricSelector
-            selectedMetric={selectedMetric}
-            onMetricChange={setSelectedMetric}
+            value={selectedMetric}
+            onValueChange={setSelectedMetric}
           />
         }
       />

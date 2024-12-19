@@ -172,7 +172,10 @@ export function ImpactProjections({ className }: ImpactProjectionsProps) {
                 </label>
               </div>
             </div>
-            <Select value={timeRange} onValueChange={(value: keyof typeof timeRanges) => setTimeRange(value)}>
+            <Select 
+              value={timeRange} 
+              onValueChange={(value: keyof typeof timeRanges) => setTimeRange(value)}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Select time range" />
               </SelectTrigger>

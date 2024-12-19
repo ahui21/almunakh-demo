@@ -1,4 +1,4 @@
-import { getData } from '@/lib/utils/map-data';
+import { processMapData } from '@/lib/utils/map-data';
 import Map from './Map';
 import type { MapMarker, RiskMetric, CountryData } from '@/lib/types/dashboard';
 
@@ -7,7 +7,6 @@ interface ServerMapProps {
   className?: string;
   selectedMetric?: RiskMetric;
   onLoadingComplete?: () => void;
-  countryRisks?: CountryData[];
 }
 
 export async function ServerMap({ 
@@ -17,7 +16,7 @@ export async function ServerMap({
   onLoadingComplete
 }: ServerMapProps) {
   try {
-    const countryRisks = await getData(selectedMetric);
+    const countryRisks = await processMapData(selectedMetric);
     
     return (
       <Map 
@@ -31,7 +30,6 @@ export async function ServerMap({
     console.error('Failed to load map data:', 
       error instanceof Error ? error.message : 'Unknown error'
     );
-    // Return map without country risks
     return (
       <Map 
         markers={markers} 
