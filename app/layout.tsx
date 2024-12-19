@@ -35,7 +35,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="flex h-screen">
           <Sidebar />
-          <div className="flex-1 flex flex-col ml-60">
+          <div className="flex-1 flex flex-col ml-52">
             <Header />
             <main className="flex-1 overflow-auto bg-gray-50 p-4">
               {children}

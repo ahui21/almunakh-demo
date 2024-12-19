@@ -61,7 +61,7 @@ export const initiatives: DashboardInitiative[] = [
   },
   {
     id: 2,
-    name: 'Southern Europe - Heat Wave',
+    name: 'SE Europe - Heat Wave',
     status: 'Planning',
     progress: 25,
     dueDate: '2024-08-31',

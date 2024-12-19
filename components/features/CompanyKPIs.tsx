@@ -13,31 +13,31 @@ const kpiChanges = {
     { name: 'Flight delays', value: '731', unit: 'flights', trend: 'down', change: -4.4 },
     { name: 'Operational costs', value: '680M', unit: '$', trend: 'down', change: -6.6 },
     { name: 'Fleet vulnerability', value: '21%', unit: 'index', trend: 'down', change: -2.9 },
-    { name: 'Infrastucture resilience', value: '12%', unit: 'index', trend: 'down', change: -5.1 },
+    { name: 'Infra. resilience', value: '12%', unit: 'index', trend: 'down', change: -5.1 },
   ],
   month: [
     { name: 'Flight delays', value: '731', unit: 'flights', trend: 'down', change: -1.0 },
     { name: 'Operational costs', value: '680M', unit: '$', trend: 'down', change: -1.2 },
     { name: 'Fleet vulnerability', value: '21%', unit: 'index', trend: 'down', change: -1.1 },
-    { name: 'Infrastucture resilience', value: '12%', unit: 'index', trend: 'down', change: -1.5 },
+    { name: 'Infra. resilience', value: '12%', unit: 'index', trend: 'down', change: -1.5 },
   ],
   '6months': [
     { name: 'Flight delays', value: '731', unit: 'flights', trend: 'up', change: +7.3 },
     { name: 'Operational costs', value: '680M', unit: '$', trend: 'up', change: +7.3 },
     { name: 'Fleet vulnerability', value: '21%', unit: 'index', trend: 'up', change: +1.3 },
-    { name: 'Infrastucture resilience', value: '12%', unit: 'index', trend: 'up', change: +1.2 },
+    { name: 'Infra. resilience', value: '12%', unit: 'index', trend: 'up', change: +1.2 },
   ],
   year: [
     { name: 'Flight delays', value: '731', unit: 'flights', trend: 'up', change: +1.7 },
     { name: 'Operational costs', value: '680M', unit: '$', trend: 'up', change: +5.5 },
     { name: 'Fleet vulnerability', value: '21%', unit: 'index', trend: 'up', change: +9.1 },
-    { name: 'Infrastucture resilience', value: '12%', unit: 'index', trend: 'up', change: +9.3 },
+    { name: 'Infra. resilience', value: '12%', unit: 'index', trend: 'up', change: +9.3 },
   ],
   '3years': [
     { name: 'Flight delays', value: '731', unit: 'flights', trend: 'up', change: +1.5 },
     { name: 'Operational costs', value: '680M', unit: '$', trend: 'up', change: +1.4 },
     { name: 'Fleet vulnerability', value: '21%', unit: 'index', trend: 'up', change: +8.9 },
-    { name: 'Infrastucture resilience', value: '12%', unit: 'index', trend: 'up', change: +1.3 },
+    { name: 'Infra. resilience', value: '12%', unit: 'index', trend: 'up', change: +1.3 },
   ],
 };
 
@@ -61,21 +61,18 @@ export function CompanyKPIs({ className }: { className?: string }) {
         <div className="space-y-4">
           {sortedKpis.map((kpi) => (
             <div key={kpi.name} className="flex items-center justify-between">
-              <span className="text-base font-medium flex-1">{kpi.name}</span>
+              <span className="text-sm font-medium flex-1">{kpi.name}</span>
               <div className="flex items-center gap-3">
-                <span className="text-base font-semibold w-20 text-right">{kpi.value}</span>
+                <span className="text-sm font-semibold w-20 text-right">{kpi.value}</span>
                 <div className="flex items-center gap-2 w-20">
                   <div className="w-5 flex justify-end">
                     {kpi.trend === 'up' ? (
-                      <TrendingUp className="w-5 h-5 text-[#DF2935]" />
+                      <TrendingUp className="w-4 h-4 text-[#DF2935]" />
                     ) : (
-                      <TrendingDown className="w-5 h-5 text-[#069D27]" />
+                      <TrendingDown className="w-4 h-4 text-[#069D27]" />
                     )}
                   </div>
-                  <span className={cn(
-                    "text-sm font-medium w-12 text-right",
-                    kpi.change > 0 ? "text-[#DF2935]" : "text-[#069D27]"
-                  )}>
+                  <span className="text-xs font-medium w-12 text-right">
                     {kpi.change > 0 ? '+' : ''}{kpi.change}%
                   </span>
                 </div>

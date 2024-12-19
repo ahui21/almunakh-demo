@@ -56,23 +56,20 @@ export function TopRisks({ className }: { className?: string }) {
           {sortedRisks.map((risk) => (
             <div key={risk.name} className="flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1">
-                <risk.icon className="w-5 h-5 text-gray-500" />
-                <span className="text-base font-medium">{risk.name}</span>
+                <risk.icon className="w-4 h-4 text-gray-500" />
+                <span className="text-sm font-medium">{risk.name}</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-base font-semibold w-12 text-right">{risk.score}</span>
+                <span className="text-sm font-semibold w-12 text-right">{risk.score}</span>
                 <div className="flex items-center gap-2 w-20">
                   <div className="w-5 flex justify-end">
                     {risk.trend === 'up' ? (
-                      <TrendingUp className="w-5 h-5 text-[#DF2935]" />
+                      <TrendingUp className="w-4 h-4 text-[#DF2935]" />
                     ) : (
-                      <TrendingDown className="w-5 h-5 text-[#069D27]" />
+                      <TrendingDown className="w-4 h-4 text-[#069D27]" />
                     )}
                   </div>
-                  <span className={cn(
-                    "text-sm font-medium w-12 text-right",
-                    risk.change > 0 ? "text-[#DF2935]" : "text-[#069D27]"
-                  )}>
+                  <span className="text-xs font-medium w-12 text-right">
                     {risk.change > 0 ? '+' : ''}{risk.change}%
                   </span>
                 </div>

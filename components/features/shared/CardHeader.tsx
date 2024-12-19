@@ -12,14 +12,13 @@ interface CardHeaderProps {
 
 export function CardHeader({ title, subtitle, action, className }: CardHeaderProps) {
   return (
-    <div className={cn("flex items-center justify-between mb-2", className)}>
+    <div className={cn("flex items-center justify-between mb-4", className)}>
       <div>
-        <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-        {subtitle && (
-          <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>
-        )}
+        <h3 className="text-lg font-semibold">{title}</h3>
       </div>
-      {action}
+      {action && (
+        <div>{action}</div>
+      )}
     </div>
   );
 }

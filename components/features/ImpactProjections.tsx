@@ -141,19 +141,19 @@ export function ImpactProjections({ className }: ImpactProjectionsProps) {
     <Card className={cn("p-6", className)}>
       <CardHeader 
         title="Impact Projections" 
-        subtitle="Baseline, risk, and opportunity scenarios"
         action={
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 ml-8">
+            <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <Checkbox 
                   id="risks" 
                   checked={showRisks}
                   onCheckedChange={(checked) => setShowRisks(checked as boolean)}
+                  className="border-red-500 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
                 />
                 <label
                   htmlFor="risks"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-xs font-medium whitespace-nowrap text-red-600"
                 >
                   w/ Risk Mitigation
                 </label>
@@ -163,10 +163,11 @@ export function ImpactProjections({ className }: ImpactProjectionsProps) {
                   id="opportunities" 
                   checked={showOpportunities}
                   onCheckedChange={(checked) => setShowOpportunities(checked as boolean)}
+                  className="border-green-500 data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                 />
                 <label
                   htmlFor="opportunities"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  className="text-xs font-medium whitespace-nowrap text-green-600"
                 >
                   w/ New Opportunities
                 </label>
@@ -187,7 +188,7 @@ export function ImpactProjections({ className }: ImpactProjectionsProps) {
           </div>
         }
       />
-      <div className="h-[calc(100%-5rem)]">
+      <div className="h-[calc(100%-3rem)]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}

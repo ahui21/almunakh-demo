@@ -77,16 +77,18 @@ export function Sidebar() {
   ];
 
   const NavLink = ({ name, href, icon: Icon, isPremium }: typeof mainLinks[0]) => {
+    const commonClasses = cn(
+      "flex items-center gap-2 px-3 py-2 text-sm text-primary-foreground/90 rounded-md hover:bg-primary-foreground/10 transition-colors",
+      pathname === href && "bg-primary-foreground/20 text-primary-foreground font-medium"
+    );
+
     if (isPremium) {
       return (
         <button
           onClick={showPremiumError}
-          className={cn(
-            "w-full flex items-center gap-3 px-4 py-2 text-primary-foreground/90 rounded-md hover:bg-primary-foreground/10 transition-colors",
-            pathname === href && "bg-primary-foreground/20 text-primary-foreground font-medium"
-          )}
+          className={commonClasses}
         >
-          <Icon className="w-5 h-5" />
+          <Icon className="w-4 h-4" />
           <span>{name}</span>
         </button>
       );
@@ -95,12 +97,9 @@ export function Sidebar() {
     return (
       <Link
         href={href}
-        className={cn(
-          "flex items-center gap-3 px-4 py-2 text-primary-foreground/90 rounded-md hover:bg-primary-foreground/10 transition-colors",
-          pathname === href && "bg-primary-foreground/20 text-primary-foreground font-medium"
-        )}
+        className={commonClasses}
       >
-        <Icon className="w-5 h-5" />
+        <Icon className="w-4 h-4" />
         <span>{name}</span>
       </Link>
     );
@@ -108,14 +107,14 @@ export function Sidebar() {
 
   return (
     <>
-      <aside className="fixed left-0 top-0 w-60 h-screen bg-primary text-white flex flex-col">
-        <div className="p-6">
-          <h1 className="text-3xl font-extrabold tracking-tight">Almunakh</h1>
-          <p className="text-sm text-primary-foreground/70">Climate Impact Dashboard</p>
+      <aside className="fixed left-0 top-0 w-52 h-screen bg-primary text-white flex flex-col">
+        <div className="p-5">
+          <h1 className="text-2xl font-extrabold tracking-tight">Almunakh</h1>
+          <p className="text-xs text-primary-foreground/70">Climate Impact Dashboard</p>
         </div>
         
         {/* Main Navigation */}
-        <nav className="flex-1 p-4">
+        <nav className="flex-1 px-4 py-3">
           <ul className="space-y-1">
             {mainLinks.map((link) => (
               <li key={link.name}>
@@ -126,7 +125,7 @@ export function Sidebar() {
         </nav>
 
         {/* Settings Section */}
-        <div className="p-4 border-t border-primary-foreground/10">
+        <div className="px-4 py-3 border-t border-primary-foreground/10">
           <h2 className="text-sm font-semibold text-primary-foreground/70 mb-2">Settings</h2>
           <ul className="space-y-1">
             {settingsLinks.map((link) => (
@@ -138,7 +137,7 @@ export function Sidebar() {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-primary-foreground/10">
+        <div className="px-4 py-3 border-t border-primary-foreground/10">
           <div className="text-xs text-primary-foreground/70">
             <p>© 2024 Almunakh</p>
             <p>Version 1.0.0</p>
