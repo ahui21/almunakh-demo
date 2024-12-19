@@ -28,26 +28,5 @@ export function InitiativeItem({ initiative }: { initiative: Initiative }) {
             </div>
           </div>
         </div>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <div className="mt-2 pl-10 space-y-3">
-          {initiative.tasks?.map((task) => (
-            <div key={task.id} className="p-3 bg-white rounded-lg border">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">{task.name}</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-32">
-                    <ProgressBar progress={task.progress} />
-                  </div>
-                  {task.status && <StatusBadge status={task.status} />}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </CollapsibleContent>
-    </Collapsible>
   );
 }

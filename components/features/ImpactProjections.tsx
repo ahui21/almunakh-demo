@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import { CardHeader } from '@/components/features/shared/CardHeader';
 import { cn } from '@/lib/utils';
@@ -13,6 +13,7 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
+  Legend
 } from 'recharts';
 import { format, addMonths, startOfMonth } from 'date-fns';
 import {
@@ -74,21 +75,72 @@ export function ImpactProjections({ className }: ImpactProjectionsProps) {
   const [showRisks, setShowRisks] = useState(false);
   const [showOpportunities, setShowOpportunities] = useState(false);
   
-  const data = generateMonthlyData(
+  const data = useMemo(() => generateMonthlyData(
     startOfMonth(new Date()),
     timeRanges[timeRange],
     1000000
-  );
+  ), [timeRange]);
 
   const yDomain = [
     0,
     Math.ceil(Math.max(...data.map(d => d._maxValue)) / 1000000) * 1000000
   ];
 
+  const baselineLine = useMemo(() => (
+    <Line
+      type="monotone"
+      dataKey="baseline"
+      stroke="#000000"
+      strokeWidth={2}
+      dot={{ fill: '#000000', r: 4 }}
+      activeDot={{ r: 6 }}
+      name="Baseline Scenario"
+    />
+  ), []);
+
+  const riskLine = useMemo(() => (
+    <Line
+      type="monotone"
+      dataKey="withRisks"
+      stroke="#EF4444"
+      strokeWidth={2}
+      dot={{ fill: '#EF4444', r: 4 }}
+      activeDot={{ r: 6 }}
+      name="w/ Risk Mitigation"
+      style={{ display: showRisks ? 'initial' : 'none' }}
+    />
+  ), [showRisks]);
+
+  const opportunitiesLine = useMemo(() => (
+    <Line
+      type="monotone"
+      dataKey="withOpportunities"
+      stroke="#22C55E"
+      strokeWidth={2}
+      dot={{ fill: '#22C55E', r: 4 }}
+      activeDot={{ r: 6 }}
+      name="w/ New Opportunities"
+      style={{ display: showOpportunities ? 'initial' : 'none' }}
+    />
+  ), [showOpportunities]);
+
+  const combinedLine = useMemo(() => (
+    <Line
+      type="monotone"
+      dataKey="withBoth"
+      stroke="#3B82F6"
+      strokeWidth={2}
+      dot={{ fill: '#3B82F6', r: 4 }}
+      activeDot={{ r: 6 }}
+      name="Combined Impact"
+      style={{ display: showRisks && showOpportunities ? 'initial' : 'none' }}
+    />
+  ), [showRisks, showOpportunities]);
+
   return (
     <Card className={cn("p-6", className)}>
       <CardHeader 
-        title="Financial Impact Projections" 
+        title="Impact Projections" 
         subtitle="Baseline, risk, and opportunity scenarios"
         action={
           <div className="flex items-center gap-6">
@@ -174,51 +226,10 @@ export function ImpactProjections({ className }: ImpactProjectionsProps) {
               }}
             />
             
-            {/* Baseline (always shown) */}
-            <Line
-              type="monotone"
-              dataKey="baseline"
-              stroke="#EF4444"
-              strokeWidth={2}
-              dot={{ fill: '#EF4444', r: 4 }}
-              activeDot={{ r: 6 }}
-              name="Baseline Scenario"
-            />
-            
-            {/* Conditional Lines */}
-            {showRisks && !showOpportunities && (
-              <Line
-                type="monotone"
-                dataKey="withRisks"
-                stroke="#F59E0B"
-                strokeWidth={2}
-                dot={{ fill: '#F59E0B', r: 4 }}
-                activeDot={{ r: 6 }}
-                name="w/ Risk Mitigation"
-              />
-            )}
-            {showOpportunities && !showRisks && (
-              <Line
-                type="monotone"
-                dataKey="withOpportunities"
-                stroke="#22C55E"
-                strokeWidth={2}
-                dot={{ fill: '#22C55E', r: 4 }}
-                activeDot={{ r: 6 }}
-                name="w/ New Opportunities"
-              />
-            )}
-            {showRisks && showOpportunities && (
-              <Line
-                type="monotone"
-                dataKey="withBoth"
-                stroke="#3B82F6"
-                strokeWidth={2}
-                dot={{ fill: '#3B82F6', r: 4 }}
-                activeDot={{ r: 6 }}
-                name="w/ Both Scenarios"
-              />
-            )}
+            {baselineLine}
+            {riskLine}
+            {opportunitiesLine}
+            {combinedLine}
           </LineChart>
         </ResponsiveContainer>
       </div>

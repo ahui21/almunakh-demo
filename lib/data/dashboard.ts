@@ -11,11 +11,10 @@ interface SubInitiative {
 }
 
 export const locations: Location[] = [
-  { id: 1, name: 'New York', score: 85, trend: 'up' },
-  { id: 2, name: 'Los Angeles', score: 78, trend: 'down' },
-  { id: 3, name: 'Miami', score: 92, trend: 'up' },
-  { id: 4, name: 'Chicago', score: 75, trend: 'down' },
-  { id: 5, name: 'Houston', score: 88, trend: 'up' },
+  { id: 1, name: 'MIA Maintenance', score: 78, trend: 'down' },
+  { id: 2, name: 'LAX Operations', score: 62, trend: 'up' },
+  { id: 3, name: 'ORD Headquarters', score: 37, trend: 'up' },
+  { id: 4, name: 'JFK Flight Hub', score: 15, trend: 'up' },
 ];
 
 export const risks: Risk[] = [
@@ -28,66 +27,52 @@ export const risks: Risk[] = [
 export const initiatives: DashboardInitiative[] = [
   {
     id: 1,
-    name: 'Climate Risk Assessment',
+    name: 'JFK - Hurricane Sandy',
     status: 'In Progress',
     progress: 75,
-    dueDate: '2024-06-15',
+    dueDate: '2024-08-29',
     poc: 'John Doe',
-    tasks: [
-      {
-        id: 1,
-        name: 'Data Collection',
-        progress: 100,
-        status: 'Completed'
-      },
-      {
-        id: 2,
-        name: 'Analysis',
-        progress: 60,
-        status: 'In Progress'
-      }
-    ],
     subInitiatives: [
       {
         id: 1,
-        name: 'Data Collection',
+        name: 'Scheduling Adjustments',
         status: 'Completed',
         progress: 100,
-        dueDate: '2024-03-15',
+        dueDate: '2024-08-27',
         poc: 'Sarah Smith'
       },
       {
         id: 2,
-        name: 'Risk Analysis',
+        name: 'Aircraft Relocation',
         status: 'In Progress',
         progress: 60,
-        dueDate: '2024-05-01',
+        dueDate: '2024-08-28',
         poc: 'Mike Johnson'
       },
       {
         id: 3,
-        name: 'Report Generation',
+        name: 'Passenger Notifications',
         status: 'Planning',
         progress: 20,
-        dueDate: '2024-06-10',
+        dueDate: '2024-08-29',
         poc: 'Emily Brown'
       }
     ]
   },
   {
     id: 2,
-    name: 'Waste Reduction Program',
+    name: 'Southern Europe - Heat Wave',
     status: 'Planning',
     progress: 25,
-    dueDate: '2024-07-30',
+    dueDate: '2024-08-31',
     poc: 'Jane Doe'
   },
   {
     id: 3,
-    name: 'Carbon Offset Project',
+    name: 'Australia - Drought',
     status: 'Completed',
     progress: 100,
-    dueDate: '2024-05-01',
+    dueDate: '2024-08-22',
     poc: 'Bob Smith'
   },
 ];

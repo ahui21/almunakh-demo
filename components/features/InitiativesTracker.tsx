@@ -35,7 +35,7 @@ export function InitiativesTracker({ className }: InitiativesTrackerProps) {
         title="Active Initiatives" 
         action={<StatusFilter selectedStatus={selectedStatus} onStatusChange={setSelectedStatus} />}
       />
-      <div className="h-[calc(100%-5rem)] overflow-y-auto pr-2 mt-6">
+      <div className="h-[calc(100%-5rem)] overflow-y-auto mt-6">
         {/* Column Headers */}
         <div className="grid grid-cols-12 gap-4 mb-4 text-sm font-medium text-gray-500">
           <div className="col-span-4">Initiative</div>
