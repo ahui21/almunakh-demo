@@ -1,8 +1,8 @@
 import Map from './Map';
 import type { MapMarker, CountryData } from '@/lib/types/dashboard';
 import { parse } from 'csv-parse';
+import { countryNameMap } from '@/lib/utils/country-translations';
 
-// Add console logging to track problematic records
 const unmappedCountries = new Set<string>();
 
 interface CSVRecord {
@@ -22,7 +22,7 @@ async function getData(): Promise<CountryData[]> {
     }
 
     const fileContent = await response.text();
-    return new Promise((resolve, reject) => {
+    return new Promise<CountryData[]>((resolve, reject) => {
       parse(fileContent, {
         columns: true,
         skip_empty_lines: true,
@@ -34,19 +34,56 @@ async function getData(): Promise<CountryData[]> {
           resolve([]);
           return;
         }
-        // Rest of your data processing...
+
         const processedRecords = records
           .map((record: CSVRecord) => {
-            // Your existing mapping logic
+            // Basic validation
+            if (!record.Region || !record.WRI) {
+              console.warn('Invalid record found:', record);
+              return null;
+            }
+
+            // Parse and validate WRI score
+            const score = Number(record.WRI);
+            if (isNaN(score) || score < 0 || score > 100) {
+              console.warn('Invalid WRI score:', record);
+              return null;
+            }
+
+            // Map country names and handle special cases
+            const countryName = countryNameMap[record.Region] || record.Region;
+            
+            // Track unmapped countries
+            if (!countryNameMap[record.Region]) {
+              unmappedCountries.add(record.Region);
+            }
+
+            // Additional validation for country names
+            if (countryName.length < 2) {
+              console.warn('Invalid country name:', record);
+              return null;
+            }
+
+            return {
+              country: countryName,
+              scores: {
+                'World Risk Index': score,
+                'Exposure': Number(record.Exposure) || 0,
+                'Vulnerability': Number(record.Vulnerability) || 0
+              },
+              year: Number(record.Year) || new Date().getFullYear()
+            };
           })
           .filter((record): record is NonNullable<typeof record> => {
             return record !== null && !isNaN(record.scores['World Risk Index']);
           });
+
         resolve(processedRecords);
       });
     });
   } catch (error) {
-    // ... error handling ...
+    console.error('Error processing CSV data:', error);
+    return [];
   }
 }
 
@@ -55,15 +92,7 @@ interface MapDataProviderProps {
   className?: string;
 }
 
-interface MapDataError {
-  message: string;
-  code?: string;
-}
-
-export async function MapDataProvider({ 
-  markers,
-  className 
-}: MapDataProviderProps) {
+export async function MapDataProvider({ markers, className }: MapDataProviderProps) {
   try {
     const countryRisks = await getData();
     return (
