@@ -10,6 +10,16 @@ interface CSVRecord {
   Year?: string;
 }
 
+type ProcessedRecord = {
+  country: string;
+  scores: {
+    'World Risk Index': number;
+    'Exposure': number;
+    'Vulnerability': number;
+  };
+  year: number;
+} | null;
+
 async function getData(): Promise<CountryData[]> {
   try {
     const response = await fetch('/data/world_risk_index.csv');
@@ -33,21 +43,18 @@ async function getData(): Promise<CountryData[]> {
         }
 
         const processedRecords = records
-          .map((record: CSVRecord) => {
-            // Basic validation
+          .map((record: CSVRecord): ProcessedRecord => {
             if (!record.Region || !record.WRI) {
               console.warn('Invalid record found:', record);
               return null;
             }
 
-            // Parse and validate WRI score
             const score = Number(record.WRI);
             if (isNaN(score) || score < 0 || score > 100) {
               console.warn('Invalid WRI score:', record);
               return null;
             }
 
-            // Additional validation for country names
             if (record.Region.length < 2) {
               console.warn('Invalid country name:', record);
               return null;
@@ -63,7 +70,7 @@ async function getData(): Promise<CountryData[]> {
               year: Number(record.Year) || new Date().getFullYear()
             };
           })
-          .filter((record): record is NonNullable<typeof record> => {
+          .filter((record): record is NonNullable<ProcessedRecord> => {
             return record !== null && !isNaN(record.scores['World Risk Index']);
           });
 
