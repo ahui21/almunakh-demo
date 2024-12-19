@@ -6,6 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import './map.css';
 import type { MapMarker, CountryData, MarkerType, RiskMetric } from '@/lib/types/dashboard';
 import { scaleLinear } from 'd3-scale';
+import { cn } from '@/lib/utils';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
 
@@ -391,8 +392,9 @@ export default function MapComponent(props?: MapProps) {
         const mapMarker = new mapboxgl.Marker(el)
           .setLngLat(marker.coordinates)
           .addTo(newMap)
-          .on('dragend', (e: mapboxgl.MapboxEvent<MouseEvent>) => {
+          .on('dragend', () => {
             const lngLat = mapMarker.getLngLat();
+            marker.coordinates = [lngLat.lng, lngLat.lat];
           });
 
         // Store marker reference
@@ -479,11 +481,7 @@ export default function MapComponent(props?: MapProps) {
   return (
     <div 
       ref={mapContainer} 
-      style={{ 
-        width: '100%',
-        height: '100%',
-        minHeight: '500px'
-      }}
+      className={cn("w-full h-full min-h-[500px]", props?.className)}
     />
   );
 }

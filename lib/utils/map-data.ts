@@ -3,6 +3,15 @@ import type { RiskMetric, CountryData } from '@/lib/types/dashboard';
 
 const unmappedCountries = new Set<string>();
 
+interface CSVRecord {
+  Region: string;
+  WRI: string;
+  Exposure: string;
+  Vulnerability: string;
+  year?: string;
+  [key: string]: string | undefined;
+}
+
 export async function getData(selectedMetric: RiskMetric = 'World Risk Index'): Promise<CountryData[]> {
   try {
     const response = await fetch('/data/world_risk_index.csv');
@@ -24,7 +33,7 @@ export async function getData(selectedMetric: RiskMetric = 'World Risk Index'): 
     };
 
     return records
-      .map((record: any) => {
+      .map((record: CSVRecord) => {
         if (!record.Region) {
           console.warn('Invalid record found:', record);
           return null;

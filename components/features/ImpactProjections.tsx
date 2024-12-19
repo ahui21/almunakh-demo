@@ -12,8 +12,7 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  ResponsiveContainer,
-  Legend
+  ResponsiveContainer
 } from 'recharts';
 import { format, addMonths, startOfMonth } from 'date-fns';
 import {
