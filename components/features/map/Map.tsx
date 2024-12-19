@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './map.css';
@@ -215,6 +215,118 @@ export default function MapComponent(props?: MapProps) {
   const hoveredStateId = useRef<string | number | null>(null);
   const hoverPopup = useRef<mapboxgl.Popup | null>(null);
 
+  // Move the helper functions here
+  const setupMapLayers = useCallback((map: mapboxgl.Map) => {
+    map.addSource('countries', {
+      type: 'vector',
+      url: 'mapbox://mapbox.country-boundaries-v1'
+    });
+
+    map.addLayer({
+      id: 'country-fills',
+      type: 'fill',
+      source: 'countries',
+      'source-layer': 'country_boundaries',
+      paint: {
+        'fill-color': [
+          'match',
+          ['get', 'name_en'],
+          ...Array.from(countryDataRef.current.entries()).flatMap(([country, data]) => [
+            country,
+            colorScale(data[selectedMetric] || 0)
+          ]),
+          '#cccccc'
+        ],
+        'fill-opacity': 0.7
+      }
+    });
+
+    map.addLayer({
+      id: 'country-borders',
+      type: 'line',
+      source: 'countries',
+      'source-layer': 'country_boundaries',
+      paint: {
+        'line-color': '#627BC1',
+        'line-width': [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false],
+          2,
+          0.5
+        ]
+      }
+    });
+  }, [selectedMetric]);
+
+  const setupMapInteractions = useCallback((map: mapboxgl.Map) => {
+    map.on('mousemove', 'country-fills', (e) => {
+      if (e.features && e.features.length > 0) {
+        if (hoveredStateId.current !== null) {
+          map.setFeatureState(
+            { source: 'countries', sourceLayer: 'country_boundaries', id: hoveredStateId.current },
+            { hover: false }
+          );
+        }
+        hoveredStateId.current = e.features[0].id;
+        map.setFeatureState(
+          { source: 'countries', sourceLayer: 'country_boundaries', id: hoveredStateId.current },
+          { hover: true }
+        );
+
+        const countryName = e.features[0].properties?.name_en;
+        const countryData = countryDataRef.current.get(countryName);
+        if (countryData) {
+          const score = countryData[selectedMetric];
+          map.getCanvas().style.cursor = 'pointer';
+          
+          // Remove existing hover popup if any
+          if (hoverPopup.current) {
+            hoverPopup.current.remove();
+          }
+          
+          // Create new popup
+          hoverPopup.current = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+          })
+            .setLngLat(e.lngLat)
+            .setHTML(`
+              <div style="
+                font-family: var(--font-inter);
+                padding: 8px;
+                background-color: white;
+                border-radius: 4px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+              ">
+                <div style="font-weight: 500;">${countryName}</div>
+                <div style="color: #666;">
+                  ${selectedMetric}: ${score.toFixed(1)}
+                </div>
+              </div>
+            `)
+            .addTo(map);
+        }
+      }
+    });
+
+    map.on('mouseleave', 'country-fills', () => {
+      if (hoveredStateId.current !== null) {
+        map.setFeatureState(
+          { source: 'countries', sourceLayer: 'country_boundaries', id: hoveredStateId.current },
+          { hover: false }
+        );
+      }
+      hoveredStateId.current = null;
+      map.getCanvas().style.cursor = '';
+      
+      // Remove hover popup
+      if (hoverPopup.current) {
+        hoverPopup.current.remove();
+        hoverPopup.current = null;
+      }
+    });
+  }, [selectedMetric]);
+
   // Initial map setup and country data loading
   useEffect(() => {
     if (!mapContainer.current || !mapboxgl.accessToken) return;
@@ -281,7 +393,6 @@ export default function MapComponent(props?: MapProps) {
           .addTo(newMap)
           .on('dragend', (e: mapboxgl.MapboxEvent<MouseEvent>) => {
             const lngLat = mapMarker.getLngLat();
-            console.log('Marker moved to:', lngLat);
           });
 
         // Store marker reference
@@ -335,7 +446,7 @@ export default function MapComponent(props?: MapProps) {
     return () => {
       cleanup();
     };
-  }, []);
+  }, [markers, onLoadingComplete, setupMapInteractions, setupMapLayers]);
 
   // Update colors when metric changes
   useEffect(() => {
@@ -352,131 +463,14 @@ export default function MapComponent(props?: MapProps) {
     ]);
   }, [selectedMetric]);
 
-  // Helper functions
-  const setupMapLayers = (map: mapboxgl.Map) => {
-    map.addSource('countries', {
-      type: 'vector',
-      url: 'mapbox://mapbox.country-boundaries-v1'
-    });
-
-    map.addLayer({
-      id: 'country-fills',
-      type: 'fill',
-      source: 'countries',
-      'source-layer': 'country_boundaries',
-      paint: {
-        'fill-color': [
-          'match',
-          ['get', 'name_en'],
-          ...Array.from(countryDataRef.current.entries()).flatMap(([country, data]) => [
-            country,
-            colorScale(data[selectedMetric] || 0)
-          ]),
-          '#cccccc'
-        ],
-        'fill-opacity': 0.7
-      }
-    });
-
-    map.addLayer({
-      id: 'country-borders',
-      type: 'line',
-      source: 'countries',
-      'source-layer': 'country_boundaries',
-      paint: {
-        'line-color': '#627BC1',
-        'line-width': [
-          'case',
-          ['boolean', ['feature-state', 'hover'], false],
-          2,
-          0.5
-        ]
-      }
-    });
-  };
-
-  // Add these helper functions after setupMapLayers
-  const setupMapInteractions = (map: mapboxgl.Map) => {
-    map.on('mousemove', 'country-fills', (e) => {
-      if (e.features && e.features.length > 0) {
-        if (hoveredStateId.current !== null) {
-          map.setFeatureState(
-            { source: 'countries', sourceLayer: 'country_boundaries', id: hoveredStateId.current },
-            { hover: false }
-          );
-        }
-        hoveredStateId.current = e.features[0].id;
-        map.setFeatureState(
-          { source: 'countries', sourceLayer: 'country_boundaries', id: hoveredStateId.current },
-          { hover: true }
-        );
-
-        const countryName = e.features[0].properties?.name_en;
-        const countryData = countryDataRef.current.get(countryName);
-        if (countryData) {
-          const score = countryData[selectedMetric];
-          map.getCanvas().style.cursor = 'pointer';
-          
-          // Remove existing hover popup if any
-          if (hoverPopup.current) {
-            hoverPopup.current.remove();
-          }
-          
-          // Create new popup
-          hoverPopup.current = new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false
-          })
-            .setLngLat(e.lngLat)
-            .setHTML(`
-              <div style="
-                font-family: var(--font-inter);
-                padding: 8px;
-                background-color: white;
-                border-radius: 4px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-              ">
-                <div style="font-weight: 500;">${countryName}</div>
-                <div style="color: #666;">
-                  ${selectedMetric}: ${score.toFixed(1)}
-                </div>
-              </div>
-            `)
-            .addTo(map);
-        } else {
-          // After a few seconds, log all unmapped countries we've found
-          setTimeout(() => {
-            console.log('All unmapped countries so far:', 
-              Array.from(unmappedCountries.current).sort()
-            );
-          }, 5000);
-        }
-      }
-    });
-
-    map.on('mouseleave', 'country-fills', () => {
-      if (hoveredStateId.current !== null) {
-        map.setFeatureState(
-          { source: 'countries', sourceLayer: 'country_boundaries', id: hoveredStateId.current },
-          { hover: false }
-        );
-      }
-      hoveredStateId.current = null;
-      map.getCanvas().style.cursor = '';
-      
-      // Remove hover popup
-      if (hoverPopup.current) {
-        hoverPopup.current.remove();
-        hoverPopup.current = null;
-      }
-    });
-  };
-
   const cleanup = () => {
     if (map.current) {
       Object.values(markersRef.current).forEach(marker => marker.remove());
       if (activePopup.current) {
         activePopup.current.remove();
+      }
+      if (hoverPopup.current) {
+        hoverPopup.current.remove();
       }
       map.current.remove();
     }

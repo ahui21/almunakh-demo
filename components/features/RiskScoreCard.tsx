@@ -1,6 +1,6 @@
 'use client';
 
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingDown } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { memo } from 'react';
 import { CardHeader } from '@/components/features/shared/CardHeader';
