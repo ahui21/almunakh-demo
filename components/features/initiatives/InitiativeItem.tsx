@@ -1,6 +1,6 @@
 'use client';
 
-import { Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { Clock, ChevronDown } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Initiative } from '@/lib/types/dashboard';
 import { ProgressBar } from './ProgressBar';

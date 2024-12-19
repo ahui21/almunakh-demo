@@ -127,12 +127,15 @@ export async function GET(request: Request) {
       
       return NextResponse.json(result);
     } catch (error) {
-      console.error('API Route - Data processing error:', {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      });
-
+      if (error instanceof Error) {
+        console.error('API Route - Data processing error:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack
+        });
+      } else {
+        console.error('API Route - Unknown error:', error);
+      }
       return NextResponse.json(
         { 
           error: 'Failed to process data',

@@ -373,7 +373,7 @@ export default function MapComponent(props?: MapProps) {
     });
 
     // Inside the first useEffect, after the map.current = newMap; line
-    newMap.on('style.load', (e: mapboxgl.MapboxEvent<'style.load'>) => {
+    newMap.on('style.load', () => {
       markers.forEach(marker => {
         // Create marker element
         const el = document.createElement('div') as HTMLDivElement;
