@@ -5,6 +5,9 @@ import { CardHeader } from '@/components/features/shared/CardHeader';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 import { mapMarkers } from '@/lib/data/dashboard';
+import { useState } from 'react';
+import { MetricSelector } from './map/MetricSelector';
+import type { RiskMetric } from '@/lib/types/dashboard';
 
 const MapWithNoSSR = dynamic(() => import('@/components/features/map/Map'), {
   ssr: false,
@@ -20,13 +23,24 @@ interface GlobalMapProps {
 }
 
 export function GlobalMap({ className }: GlobalMapProps) {
+  const [selectedMetric, setSelectedMetric] = useState<RiskMetric>('World Risk Index');
+
   return (
-    <Card className={cn("p-6", className)}>
+    <Card className={cn('p-6', className)}>
       <CardHeader 
         title="Global Overview" 
+        action={
+          <MetricSelector
+            selectedMetric={selectedMetric}
+            onMetricChange={setSelectedMetric}
+          />
+        }
       />
       <div className="h-[calc(100%-3rem)] rounded-lg overflow-hidden">
-        <MapWithNoSSR markers={mapMarkers} />
+        <MapWithNoSSR 
+          markers={mapMarkers} 
+          selectedMetric={selectedMetric}
+        />
       </div>
     </Card>
   );

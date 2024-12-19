@@ -18,7 +18,7 @@ function RiskScoreCardComponent({ className }: RiskScoreCardProps) {
       <CardHeader title="Overall Risk Score" />
       <div className="flex flex-col items-center justify-center">
         <div className="text-8xl font-bold text-center text-[#DF2935]">{score}</div>
-        <div className="mt-4 flex items-center gap-2 text-xl text-[#069D27]">
+        <div className="mt-4 flex items-center gap-2 text-lg text-[#069D27]">
           <TrendingDown className="w-7 h-7" />
           <span>-7.35% from last week</span>
         </div>

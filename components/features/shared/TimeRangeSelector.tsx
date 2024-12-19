@@ -18,7 +18,7 @@ interface TimeRangeSelectorProps {
 export function TimeRangeSelector({ value, onValueChange }: TimeRangeSelectorProps) {
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger className="w-[140px] h-8 text-sm">
+      <SelectTrigger className="w-[160px] h-8 text-sm">
         <SelectValue placeholder="Select time range" />
       </SelectTrigger>
       <SelectContent>
