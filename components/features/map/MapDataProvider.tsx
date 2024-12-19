@@ -1,9 +1,6 @@
 import Map from './Map';
 import type { MapMarker, CountryData } from '@/lib/types/dashboard';
 import { parse } from 'csv-parse';
-import { countryNameMap } from '@/lib/utils/country-translations';
-
-const unmappedCountries = new Set<string>();
 
 interface CSVRecord {
   Region: string;
@@ -50,22 +47,14 @@ async function getData(): Promise<CountryData[]> {
               return null;
             }
 
-            // Map country names and handle special cases
-            const countryName = countryNameMap[record.Region] || record.Region;
-            
-            // Track unmapped countries
-            if (!countryNameMap[record.Region]) {
-              unmappedCountries.add(record.Region);
-            }
-
             // Additional validation for country names
-            if (countryName.length < 2) {
+            if (record.Region.length < 2) {
               console.warn('Invalid country name:', record);
               return null;
             }
 
             return {
-              country: countryName,
+              country: record.Region,
               scores: {
                 'World Risk Index': score,
                 'Exposure': Number(record.Exposure) || 0,

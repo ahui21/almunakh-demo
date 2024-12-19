@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import type { RiskMetric, CountryData } from '@/lib/types/dashboard';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { germanToEnglishCountries } from '@/lib/utils/country-translations';
 import { logger } from '@/lib/utils/logger';
 
 export async function GET(request: Request) {
@@ -93,7 +92,7 @@ export async function GET(request: Request) {
             throw new Error(`Invalid year: not a number (value: ${year})`);
           }
 
-          const countryCode = germanToEnglishCountries[country] || country;
+          const countryCode = country;
           const data = {
             country: countryCode,
             scores,
