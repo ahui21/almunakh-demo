@@ -42,13 +42,29 @@ export interface SubInitiative {
   poc: string;
 }
 
+export type MarkerType = 'Hurricane' | 'Drought' | 'Heat Wave';
+
 export interface MapMarker {
   id: number;
   name: string;
   coordinates: [number, number];
-  type: string;
+  type: MarkerType;
   score: number;
   startDate: string;
   endDate: string;
   affectedAreas: string[];
+}
+
+export type RiskMetric = 
+  | 'World Risk Index'
+  | 'Exposure'
+  | 'Vulnerability'
+  | 'Susceptibility'
+  | 'Lack of Coping Capabilities'
+  | 'Lack of Adaptive Capacities';
+
+export interface CountryData {
+  country: string;
+  scores: Record<RiskMetric, number>;
+  year: number;
 }
