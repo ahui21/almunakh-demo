@@ -28,5 +28,31 @@ export function InitiativeItem({ initiative }: { initiative: Initiative }) {
             </div>
           </div>
         </div>
+      </CollapsibleTrigger>
+      
+      <CollapsibleContent>
+        {initiative.subInitiatives && (
+          <div className="mt-2 space-y-2 pl-6">
+            {initiative.subInitiatives.map(sub => (
+              <div key={sub.id} className="p-3 bg-white rounded-lg border">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h5 className="text-sm font-medium">{sub.name}</h5>
+                    <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                      <Clock className="w-3 h-3" />
+                      <span>Due {sub.dueDate}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <ProgressBar progress={sub.progress} size="sm" />
+                    <StatusBadge status={sub.status} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
