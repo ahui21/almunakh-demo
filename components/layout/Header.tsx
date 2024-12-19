@@ -41,7 +41,6 @@ export function Header() {
                 <AvatarImage 
                   src="/avatars/placeholder.jpg" 
                   alt="Sarah Wilson"
-                  fallback="SW"
                 />
                 <AvatarFallback>SW</AvatarFallback>
               </Avatar>
