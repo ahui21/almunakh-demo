@@ -203,8 +203,6 @@ export default function MapComponent(props?: MapProps) {
   const {
     markers = [],
     selectedMetric = 'World Risk Index',
-    countryRisks,
-    className,
     onLoadingComplete
   } = props || {};
 

@@ -3,6 +3,7 @@ import type { RiskMetric, CountryData } from '@/lib/types/dashboard';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { germanToEnglishCountries } from '@/lib/utils/country-translations';
+import { logger } from '@/lib/utils/logger';
 
 export async function GET(request: Request) {
   try {
@@ -112,29 +113,26 @@ export async function GET(request: Request) {
       });
 
       if (errors.length > 0) {
-        console.error('API Route - Validation errors:', errors);
+        logger.error('API Route - Validation errors:', errors);
         return NextResponse.json(
-          { 
-            error: 'Data validation failed',
-            details: errors
-          },
+          { error: 'Data validation failed', details: errors },
           { status: 400 }
         );
       }
 
       const result = Array.from(countryMap.values());
-      console.log('API Route - Successfully processed records:', result.length);
+      logger.info('API Route - Successfully processed records:', result.length);
       
       return NextResponse.json(result);
     } catch (error) {
       if (error instanceof Error) {
-        console.error('API Route - Data processing error:', {
+        logger.error('API Route - Data processing error:', {
           name: error.name,
           message: error.message,
           stack: error.stack
         });
       } else {
-        console.error('API Route - Unknown error:', error);
+        logger.error('API Route - Unknown error:', error);
       }
       return NextResponse.json(
         { 
@@ -145,11 +143,15 @@ export async function GET(request: Request) {
       );
     }
   } catch (error) {
-    console.error('API Route - Unexpected error:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    });
+    if (error instanceof Error) {
+      logger.error('API Route - Unexpected error:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+    } else {
+      logger.error('API Route - Unknown error:', error);
+    }
 
     return NextResponse.json(
       { 

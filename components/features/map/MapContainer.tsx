@@ -5,6 +5,21 @@ import { mapMarkers } from '@/lib/data/dashboard';
 
 const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
 
+interface MapMarkerProps {
+  marker: MapMarker;
+  onSelect: (marker: MapMarker) => void;
+}
+
+export function MapMarker({ marker, onSelect }: MapMarkerProps) {
+  const { name, coordinates, score } = marker;
+  return (
+    <Marker key={name} coordinates={coordinates}>
+      <circle r={3} fill="#2D7DD2" />
+      <title>{name}</title>
+    </Marker>
+  );
+}
+
 export function MapContainer() {
   return (
     <div className="h-[350px] bg-blue-50 rounded-lg overflow-hidden">
@@ -27,11 +42,8 @@ export function MapContainer() {
             ))
           }
         </Geographies>
-        {mapMarkers.map(({ name, coordinates, type }) => (
-          <Marker key={name} coordinates={coordinates}>
-            <circle r={3} fill="#2D7DD2" />
-            <title>{name}</title>
-          </Marker>
+        {mapMarkers.map((marker) => (
+          <MapMarker key={marker.name} marker={marker} onSelect={() => {}} />
         ))}
       </ComposableMap>
     </div>

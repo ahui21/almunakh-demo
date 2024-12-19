@@ -15,6 +15,9 @@ export function CardHeader({ title, subtitle, action, className }: CardHeaderPro
     <div className={cn("flex items-center justify-between mb-4", className)}>
       <div>
         <h3 className="text-lg font-semibold">{title}</h3>
+        {subtitle && (
+          <p className="text-sm text-muted-foreground">{subtitle}</p>
+        )}
       </div>
       {action && (
         <div>{action}</div>
