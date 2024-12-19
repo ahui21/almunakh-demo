@@ -46,6 +46,9 @@ export interface MapMarker {
   id: number;
   name: string;
   coordinates: [number, number];
-  type: 'hurricane' | 'heatwave' | 'drought';
-  score?: number;
+  type: string;
+  score: number;
+  startDate: string;
+  endDate: string;
+  affectedAreas: string[];
 }

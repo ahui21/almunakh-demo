@@ -1,0 +1,11 @@
+/* Remove default white background from Mapbox popup */
+.mapboxgl-popup-content {
+  background: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Remove the popup tip */
+.mapboxgl-popup-tip {
+  display: none !important;
+} 

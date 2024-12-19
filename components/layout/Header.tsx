@@ -38,8 +38,12 @@ export function Header() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-gray-100">
               <Avatar className="h-10 w-10 ring-2 ring-gray-100">
-                <AvatarImage src="/avatars/placeholder.jpg" alt="Sarah Wilson" />
-                <AvatarFallback className="bg-primary text-primary-foreground">SW</AvatarFallback>
+                <AvatarImage 
+                  src="/avatars/placeholder.jpg" 
+                  alt="Sarah Wilson"
+                  fallback="SW"
+                />
+                <AvatarFallback>SW</AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>

@@ -82,21 +82,40 @@ export const mapMarkers: MapMarker[] = [
     id: 1,
     name: "Hurricane Sandy", 
     coordinates: [-74.006, 40.7128], 
-    type: "hurricane",
-    score: 85
+    type: "Hurricane",
+    score: 85,
+    startDate: "2024-08-27",
+    endDate: "2024-08-29",
+    affectedAreas: [
+      "JFK Flight Hub",
+      "JFK Operations",
+      "LGA Maintenance"
+    ]
   },
   { 
     id: 2,
     name: "Heat Wave", 
-    coordinates: [2.3522, 48.8566], 
-    type: "heatwave",
-    score: 78
+    coordinates: [12.4822, 41.8967], 
+    type: "Heat Wave",
+    score: 78,
+    startDate: "2024-08-29",
+    endDate: "2024-08-31",
+    affectedAreas: [
+      "FCO Flight Hub",
+      "FCO Maintenance"
+    ]
   },
   { 
     id: 3,
     name: "Drought", 
-    coordinates: [138.2529, -34.9285], 
-    type: "drought",
-    score: 65
+    coordinates: [151.2093, -33.8688], 
+    type: "Drought",
+    score: 20,
+    startDate: "2024-08-20",
+    endDate: "2024-08-22",
+    affectedAreas: [
+      "SYD Maintenace",
+      "SYD Operations"
+    ]
   },
 ];
