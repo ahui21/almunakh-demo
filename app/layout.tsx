@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import 'leaflet/dist/leaflet.css';
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
+import { SpeedInsightsProvider } from '@/components/providers/SpeedInsightsProvider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -43,6 +44,7 @@ export default function RootLayout({
           </div>
         </div>
         <Toaster />
+        <SpeedInsightsProvider />
       </body>
     </html>
   );
