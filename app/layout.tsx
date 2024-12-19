@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
 import { SpeedInsightsProvider } from '@/components/providers/SpeedInsightsProvider';
+import { MobileProvider } from '@/components/providers/MobileProvider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -34,15 +35,17 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </head>
       <body className={inter.className}>
-        <div className="flex h-screen">
-          <Sidebar />
-          <div className="flex-1 flex flex-col ml-52">
-            <Header />
-            <main className="flex-1 overflow-auto bg-gray-50 p-4">
-              {children}
-            </main>
+        <MobileProvider>
+          <div className="flex h-screen">
+            <Sidebar />
+            <div className="flex-1 flex flex-col ml-52">
+              <Header />
+              <main className="flex-1 overflow-auto bg-gray-50 p-4">
+                {children}
+              </main>
+            </div>
           </div>
-        </div>
+        </MobileProvider>
         <Toaster />
         <SpeedInsightsProvider />
       </body>
