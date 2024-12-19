@@ -1,7 +1,7 @@
 import { parse } from 'csv-parse/sync';
 import type { RiskMetric, CountryData } from '@/lib/types/dashboard';
 
-let unmappedCountries = new Set<string>();
+const unmappedCountries = new Set<string>();
 
 export async function getData(selectedMetric: RiskMetric = 'World Risk Index'): Promise<CountryData[]> {
   try {

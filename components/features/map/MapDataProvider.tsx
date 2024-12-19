@@ -4,7 +4,7 @@ import { parse } from 'csv-parse/sync';
 import type { CountryData } from '@/lib/types/dashboard';
 
 // Add console logging to track problematic records
-let unmappedCountries = new Set<string>();
+const unmappedCountries = new Set<string>();
 
 interface CSVRecord {
   Region: string;
