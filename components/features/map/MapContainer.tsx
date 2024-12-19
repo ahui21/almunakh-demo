@@ -2,12 +2,13 @@
 
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
 import { mapMarkers } from '@/lib/data/dashboard';
+import type { MapMarker as MapMarkerType } from '@/lib/types/dashboard';
 
 const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
 
 interface MapMarkerProps {
-  marker: MapMarker;
-  onSelect: (marker: MapMarker) => void;
+  marker: MapMarkerType;
+  onSelect: (marker: MapMarkerType) => void;
 }
 
 export function MapMarker({ marker }: MapMarkerProps) {
