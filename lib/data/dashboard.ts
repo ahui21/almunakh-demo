@@ -61,19 +61,71 @@ export const initiatives: DashboardInitiative[] = [
   },
   {
     id: 2,
-    name: 'SE Europe - Heat Wave',
+    name: 'Italy - Heat Wave',
     status: 'Planning',
     progress: 25,
     dueDate: '2024-08-31',
-    poc: 'Jane Doe'
+    poc: 'Luca Rossi',
+    subInitiatives: [
+      {
+        id: 1,
+        name: 'Workforce Shift Changes',
+        status: 'Completed',
+        progress: 100,
+        dueDate: '2024-08-22',
+        poc: 'Giulia Bianch'
+      },
+      {
+        id: 2,
+        name: 'Runway Maintenance',
+        status: 'In Progress',
+        progress: 30,
+        dueDate: '2024-08-28',
+        poc: 'Marco Ferri'
+      },
+      {
+        id: 3,
+        name: 'Cooling / Water Stations',
+        status: 'Planning',
+        progress: 10,
+        dueDate: '2024-08-29',
+        poc: 'Luigi Romano'
+      }
+    ]
   },
   {
     id: 3,
     name: 'Australia - Drought',
     status: 'Completed',
     progress: 100,
-    dueDate: '2024-08-22',
-    poc: 'Bob Smith'
+    dueDate: '2024-07-03',
+    poc: 'Bob Smith',
+    subInitiatives: [
+      {
+        id: 1,
+        name: 'Water Usage Inventory',
+        status: 'Completed',
+        progress: 100,
+        dueDate: '2024-07-01',
+        poc: 'Jack Williams'
+      },
+      {
+        id: 2,
+        name: 'HVAC System Updates',
+        status: 'Completed',
+        progress: 100,
+        dueDate: '2024-07-02',
+        poc: 'Liam Brown'
+      },
+      {
+        id: 3,
+        name: 'Shift Wash Schedules',
+        status: 'Completed',
+        progress: 100,
+        dueDate: '2024-07-07',
+        poc: 'Olivia Johnson'
+      }
+    ]
   },
 ];
 
