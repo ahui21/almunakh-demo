@@ -9,20 +9,51 @@ import { MarkerInfoCard } from './map/MarkerInfoCard';
 import { Card } from '@/components/ui/card';
 import { CardHeader } from '@/components/features/shared/CardHeader';
 import { cn } from '@/lib/utils';
-import type { MapMarker } from '@/lib/types/dashboard';
+import type { MapMarker, CountryData, WorldRiskData } from '@/lib/types/dashboard';
 import { mapMarkers } from '@/lib/data/dashboard';
 
-// Add mock data for now - replace with real data later
-const mockCountryRisks = [
-  { id: 'USA', score: 0.75 },
-  { id: 'GBR', score: 0.5 },
-  { id: 'FRA', score: 0.3 },
-  // Add more countries as needed
+// Add mock data with correct types
+const mockCountryRisks: CountryData[] = [
+  {
+    id: 'USA',
+    country: 'United States',
+    scores: {
+      'World Risk Index': 75,
+      'Natural Disasters': 65,
+      'Infrastructure': 85
+    },
+    year: 2024
+  },
+  {
+    id: 'GBR',
+    country: 'United Kingdom',
+    scores: {
+      'World Risk Index': 50,
+      'Natural Disasters': 45,
+      'Infrastructure': 70
+    },
+    year: 2024
+  },
+  {
+    id: 'FRA',
+    country: 'France',
+    scores: {
+      'World Risk Index': 30,
+      'Natural Disasters': 35,
+      'Infrastructure': 60
+    },
+    year: 2024
+  }
 ];
 
-const mockWorldRiskData = [
-  { id: 'WRI', name: 'World Risk Index', value: 0.65 },
-  // Add more risk data as needed
+const mockWorldRiskData: WorldRiskData[] = [
+  {
+    id: 'WRI',
+    name: 'World Risk Index',
+    value: 65,
+    trend: 'up',
+    lastUpdated: '2024-02-24'
+  }
 ];
 
 interface GlobalMapProps {
