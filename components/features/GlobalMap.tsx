@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
+import type { ThreeEvent } from '@react-three/fiber';
 import { GlobeScene } from './map/GlobeScene';
 import { MarkerInfoCard } from './map/MarkerInfoCard';
 import { Card } from '@/components/ui/card';
@@ -34,9 +34,9 @@ export function GlobalMap({ className }: GlobalMapProps) {
   const [selectedMarker, setSelectedMarker] = useState<MapMarker | null>(null);
 
   // Handle click away
-  const handleBackgroundClick = (event: THREE.Event) => {
+  const handleBackgroundClick = (event: ThreeEvent<MouseEvent>) => {
     // Only close if clicking on the globe background, not a marker
-    if (event.object.type === 'Mesh' && !event.object.userData.isMarker) {
+    if ((event.object as any).type === 'Mesh' && !(event.object as any).userData?.isMarker) {
       setSelectedMarker(null);
     }
   };
