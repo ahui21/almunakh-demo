@@ -16,8 +16,6 @@ interface GlobeSceneProps {
   selectedMetric: RiskMetric;
   onMarkerClick?: (marker: MapMarker) => void;
   onBackgroundClick?: (event: ThreeEvent<MouseEvent>) => void;
-  countryRisks: CountryData[];
-  worldRiskData: WorldRiskData[];
 }
 
 // Create color scale for markers
@@ -135,9 +133,7 @@ export function GlobeScene({
   markers, 
   selectedMetric = 'World Risk Index',
   onMarkerClick,
-  onBackgroundClick,
-  countryRisks,
-  worldRiskData 
+  onBackgroundClick 
 }: GlobeSceneProps) {
   // All hooks at the top
   const globeRef = useRef<THREE.Group>(null);
@@ -198,20 +194,18 @@ export function GlobeScene({
     return countries.features.map((country: any) => {
       try {
         const { vertices, indices } = processCountryGeometry(country.geometry, radius);
-        // Find the risk data for this country
-        const riskData = countryRisks.find(risk => risk.id === country.id);
         return {
           id: country.id,
           vertices,
           indices,
-          value: riskData?.score ?? 0 // Use actual risk score or default to 0
+          value: Math.random() // Temporarily using random values until real data is connected
         };
       } catch (error) {
         console.error(`Error processing country ${country.id}:`, error);
         return null;
       }
     }).filter(Boolean);
-  }, [radius, topology, countryRisks]);
+  }, [radius, topology]);
 
   // useFrame hook
   useFrame(() => {

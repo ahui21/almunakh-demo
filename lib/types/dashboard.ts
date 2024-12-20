@@ -22,18 +22,6 @@ export interface Task {
   status?: 'In Progress' | 'Completed' | 'Planning';
 }
 
-export interface Initiative {
-  id: number;
-  name: string;
-  description: string;
-  status: 'In Progress' | 'Completed' | 'Planning';
-  progress: number;
-  dueDate: string;
-  location: string;
-  risk: string;
-  subInitiatives: SubInitiative[];
-}
-
 export interface SubInitiative {
   id: number;
   name: string;
@@ -75,4 +63,15 @@ export interface WorldRiskData {
   value: number;
   trend: TrendDirection;
   lastUpdated: string;
+}
+
+export interface Initiative {
+  id: number;
+  name: string;
+  status: 'In Progress' | 'Completed' | 'Planning';
+  progress: number;
+  dueDate: string;
+  poc: string;
+  subInitiatives?: SubInitiative[];
+  tasks?: Task[];
 }

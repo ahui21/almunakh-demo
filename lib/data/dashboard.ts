@@ -132,7 +132,7 @@ export const initiatives: DashboardInitiative[] = [
 export const mapMarkers: MapMarker[] = [
   {
     id: '1',
-    name: 'Hurricane Sandy',
+    name: 'Sandy',
     type: 'Hurricane',
     score: 85,
     coordinates: [-74.006, 40.7128],
