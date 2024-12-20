@@ -9,12 +9,13 @@ import { TextureLoader } from 'three';
 import { scaleLinear } from 'd3-scale';
 import { feature } from 'topojson-client';
 import { useWorldTopology } from '@/lib/hooks/useWorldTopology';
+import { ThreeEvent } from '@react-three/fiber';
 
 interface GlobeSceneProps {
   markers: MapMarker[];
   selectedMetric: RiskMetric;
   onMarkerClick?: (marker: MapMarker) => void;
-  onBackgroundClick?: (event: THREE.Event) => void;
+  onBackgroundClick?: (event: ThreeEvent<MouseEvent>) => void;
 }
 
 // Create color scale for markers
