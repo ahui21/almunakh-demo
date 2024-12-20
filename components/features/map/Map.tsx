@@ -336,7 +336,14 @@ export default function MapComponent(props?: MapProps) {
     const initMap = async () => {
       if (!mapContainer.current || !mapboxgl.accessToken) return;
       
-      const newMap = new mapboxgl.Map({/*...*/});
+      const newMap = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [0, 20],
+        zoom: 2,
+        projection: 'mercator'
+      });
+
       if (!mounted) {
         newMap.remove();
         return;
