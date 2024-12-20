@@ -1,34 +1,19 @@
 'use client';
 
-import { useRef, useMemo, useEffect, useState, useCallback } from 'react';
+import { useRef, useMemo, useState, useCallback } from 'react';
 import { useFrame, useThree, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
-import { Text } from '@react-three/drei';
-import type { MapMarker, RiskMetric, CountryData, WorldRiskData } from '@/lib/types/dashboard';
+import type { MapMarker } from '@/lib/types/dashboard';
 import { TextureLoader } from 'three';
-import { scaleLinear } from 'd3-scale';
 import { feature } from 'topojson-client';
 import { useWorldTopology } from '@/lib/hooks/useWorldTopology';
 import { ThreeEvent } from '@react-three/fiber';
 
 interface GlobeSceneProps {
   markers: MapMarker[];
-  selectedMetric: RiskMetric;
   onMarkerClick?: (marker: MapMarker) => void;
   onBackgroundClick?: (event: ThreeEvent<MouseEvent>) => void;
 }
-
-// Create color scale for markers
-const colorScale = scaleLinear<string>()
-  .domain([0, 25, 50, 75, 100])
-  .range(['#22C55E', '#86EFAC', '#FCD34D', '#F97316', '#E74C3C'])
-  .clamp(true);
-
-// Create color scale for countries
-const countryColorScale = scaleLinear<string>()
-  .domain([0, 0.25, 0.5, 0.75, 1])
-  .range(['#f7fbf5', '#e5f5e0', '#c7e9c0', '#a1d99b', '#74c476'])
-  .clamp(true);
 
 function latLongToVector3(lat: number, lon: number, radius: number): THREE.Vector3 {
   const phi = (90 - lat) * (Math.PI / 180);
@@ -90,7 +75,6 @@ function processCountryGeometry(geometry: any, radius: number) {
     geometry.coordinates.forEach((polygon: any) => {
       const { vertices, indices } = processPolygon(polygon, radius);
       allVertices.push(...vertices);
-      // Adjust indices for the offset
       allIndices.push(...indices.map(i => i + vertexOffset));
       vertexOffset += vertices.length / 3;
     });
@@ -108,22 +92,15 @@ function processPolygon(coordinates: any[], radius: number) {
   const indices: number[] = [];
   let vertexIndex = 0;
 
-  // Process only the outer ring for cleaner borders
   const ring = coordinates[0];
   
-  // Add vertices with slight offset for better visibility
   ring.forEach(([lon, lat]: number[]) => {
-    const point = latLongToVector3(lat, lon, radius * 1.001); // Slight offset
+    const point = latLongToVector3(lat, lon, radius * 1.001);
     vertices.push(point.x, point.y, point.z);
   });
 
-  // Create triangles using fan triangulation
   for (let i = 1; i < ring.length - 1; i++) {
-    indices.push(
-      vertexIndex,
-      vertexIndex + i,
-      vertexIndex + i + 1
-    );
+    indices.push(vertexIndex, vertexIndex + i, vertexIndex + i + 1);
   }
 
   return { vertices, indices };
@@ -131,11 +108,9 @@ function processPolygon(coordinates: any[], radius: number) {
 
 export function GlobeScene({ 
   markers, 
-  selectedMetric = 'World Risk Index',
   onMarkerClick,
   onBackgroundClick 
 }: GlobeSceneProps) {
-  // All hooks at the top
   const globeRef = useRef<THREE.Group>(null);
   const cloudsRef = useRef<THREE.Mesh>(null);
   const [hoveredMarker, setHoveredMarker] = useState<MapMarker | null>(null);
@@ -149,7 +124,6 @@ export function GlobeScene({
     '/textures/clouds.png'
   ]);
 
-  // All useMemo hooks
   const sphereMaterial = useMemo(() => new THREE.MeshPhongMaterial({
     map: earthTexture,
     bumpMap: earthTexture,
@@ -169,16 +143,7 @@ export function GlobeScene({
     color: '#ffffff'
   }), [cloudsTexture]);
 
-  const atmosphereMaterial = useMemo(() => new THREE.MeshPhongMaterial({
-    color: '#4A90E2',
-    opacity: 0.2,
-    transparent: true,
-    side: THREE.BackSide,
-    blending: THREE.AdditiveBlending
-  }), []);
-
   const sphereGeometry = useMemo(() => new THREE.SphereGeometry(radius, 64, 64), []);
-  const atmosphereGeometry = useMemo(() => new THREE.SphereGeometry(radius * 1.015, 64, 64), []);
   const glowTexture = useMemo(() => createGlowTexture(), []);
 
   const markerPositions = useMemo(() => 
@@ -194,12 +159,7 @@ export function GlobeScene({
     return countries.features.map((country: any) => {
       try {
         const { vertices, indices } = processCountryGeometry(country.geometry, radius);
-        return {
-          id: country.id,
-          vertices,
-          indices,
-          value: Math.random() // Temporarily using random values until real data is connected
-        };
+        return { vertices, indices };
       } catch (error) {
         console.error(`Error processing country ${country.id}:`, error);
         return null;
@@ -207,14 +167,12 @@ export function GlobeScene({
     }).filter(Boolean);
   }, [radius, topology]);
 
-  // useFrame hook
   useFrame(() => {
     if (cloudsRef.current) {
       cloudsRef.current.rotation.y += 0.0007;
     }
   });
 
-  // Handler functions
   const handleMarkerHover = useCallback((marker: MapMarker | null) => {
     setHoveredMarker(marker);
     document.body.style.cursor = marker ? 'pointer' : 'default';
@@ -224,12 +182,10 @@ export function GlobeScene({
     onMarkerClick?.(marker);
   }, [onMarkerClick]);
 
-  // Constants
   const MARKER_SIZE = 2;
   const HOVER_SIZE = 3;
   const GLOW_SCALE = 8;
 
-  // Loading state
   if (loading) {
     return (
       <group>
@@ -238,49 +194,16 @@ export function GlobeScene({
     );
   }
 
-  if (error) {
-    console.error('Failed to load world topology:', error);
-  }
-
   return (
     <group ref={globeRef}>
-      {/* Base sphere */}
+      {/* Base sphere with earth texture */}
       <mesh 
         geometry={sphereGeometry} 
         material={sphereMaterial}
         onClick={onBackgroundClick}
       />
       
-      {/* Country boundaries */}
-      {countryGeometries.map((country, i) => (
-        <mesh key={i}>
-          <bufferGeometry>
-            <bufferAttribute
-              attach="attributes-position"
-              count={country.vertices.length / 3}
-              array={new Float32Array(country.vertices)}
-              itemSize={3}
-            />
-            <bufferAttribute
-              attach="index"
-              array={new Uint16Array(country.indices)}
-              count={country.indices.length}
-              itemSize={1}
-            />
-          </bufferGeometry>
-          <meshPhongMaterial
-            color={countryColorScale(country.value)}
-            transparent
-            opacity={0.1} // Further reduced for better border contrast
-            side={THREE.FrontSide}
-            polygonOffset={true}
-            polygonOffsetFactor={1}
-            polygonOffsetUnits={1}
-          />
-        </mesh>
-      ))}
-
-      {/* Main country borders */}
+      {/* Country borders */}
       {countryGeometries.map((country, i) => (
         <lineSegments key={`border-${i}`}>
           <bufferGeometry>
@@ -292,32 +215,10 @@ export function GlobeScene({
             />
           </bufferGeometry>
           <lineBasicMaterial
-            color="#4A90E2" // Bright blue color
-            transparent
-            opacity={0.6}
-            linewidth={12} // Increased from 4 to 12
-          />
-        </lineSegments>
-      ))}
-
-      {/* Glow effect for borders */}
-      {countryGeometries.map((country, i) => (
-        <lineSegments key={`border-glow-${i}`}>
-          <bufferGeometry>
-            <bufferAttribute
-              attach="attributes-position"
-              count={country.vertices.length / 3}
-              array={new Float32Array(country.vertices.map((v, i) => 
-              v * (1 + (i % 3 === 0 ? 0.0004 : 0)) // Increased offset for thicker glow
-            ))}
-              itemSize={3}
-            />
-          </bufferGeometry>
-          <lineBasicMaterial
             color="#4A90E2"
             transparent
-            opacity={0.3}
-            linewidth={18} // Increased from 6 to 18
+            opacity={0.6}
+            linewidth={12}
           />
         </lineSegments>
       ))}
@@ -328,18 +229,10 @@ export function GlobeScene({
         geometry={new THREE.SphereGeometry(radius * 1.01, 64, 64)}
         material={cloudsMaterial}
       />
-      
-      {/* Atmosphere */}
-      <mesh 
-        geometry={atmosphereGeometry} 
-        material={atmosphereMaterial}
-        scale={1.1} // Slightly larger atmosphere
-      />
 
-      {/* Markers with enhanced visibility */}
+      {/* Markers with glow effect */}
       {markerPositions.map((marker, i) => (
         <group key={i}>
-          {/* Marker glow */}
           <sprite
             position={marker.position}
             scale={[GLOW_SCALE, GLOW_SCALE, 1]}
@@ -350,11 +243,10 @@ export function GlobeScene({
               transparent
               opacity={0.6}
               depthWrite={false}
-              blending={THREE.AdditiveBlending} // Add glow effect
+              blending={THREE.AdditiveBlending}
             />
           </sprite>
 
-          {/* Marker point */}
           <mesh
             position={marker.position}
             onPointerOver={() => handleMarkerHover(marker)}
