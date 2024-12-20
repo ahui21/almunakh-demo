@@ -4,7 +4,7 @@ import { useRef, useMemo, useEffect, useState, useCallback } from 'react';
 import { useFrame, useThree, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Text } from '@react-three/drei';
-import type { MapMarker, RiskMetric } from '@/lib/types/dashboard';
+import type { MapMarker, RiskMetric, CountryData, WorldRiskData } from '@/lib/types/dashboard';
 import { TextureLoader } from 'three';
 import { scaleLinear } from 'd3-scale';
 import { feature } from 'topojson-client';
@@ -16,6 +16,8 @@ interface GlobeSceneProps {
   selectedMetric: RiskMetric;
   onMarkerClick?: (marker: MapMarker) => void;
   onBackgroundClick?: (event: ThreeEvent<MouseEvent>) => void;
+  countryRisks: CountryData[];
+  worldRiskData: WorldRiskData[];
 }
 
 // Create color scale for markers
@@ -133,7 +135,9 @@ export function GlobeScene({
   markers, 
   selectedMetric = 'World Risk Index',
   onMarkerClick,
-  onBackgroundClick 
+  onBackgroundClick,
+  countryRisks,
+  worldRiskData 
 }: GlobeSceneProps) {
   // All hooks at the top
   const globeRef = useRef<THREE.Group>(null);
@@ -194,18 +198,20 @@ export function GlobeScene({
     return countries.features.map((country: any) => {
       try {
         const { vertices, indices } = processCountryGeometry(country.geometry, radius);
+        // Find the risk data for this country
+        const riskData = countryRisks.find(risk => risk.id === country.id);
         return {
           id: country.id,
           vertices,
           indices,
-          value: Math.random()
+          value: riskData?.score ?? 0 // Use actual risk score or default to 0
         };
       } catch (error) {
         console.error(`Error processing country ${country.id}:`, error);
         return null;
       }
     }).filter(Boolean);
-  }, [radius, topology]);
+  }, [radius, topology, countryRisks]);
 
   // useFrame hook
   useFrame(() => {
