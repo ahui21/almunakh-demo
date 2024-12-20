@@ -61,7 +61,7 @@ export const initiatives: DashboardInitiative[] = [
   },
   {
     id: 2,
-    name: 'Italy - Heat Wave',
+    name: 'FCO - Heat Wave',
     status: 'Planning',
     progress: 25,
     dueDate: '2024-08-31',
@@ -95,7 +95,7 @@ export const initiatives: DashboardInitiative[] = [
   },
   {
     id: 3,
-    name: 'Australia - Drought',
+    name: 'SYD - Drought',
     status: 'Completed',
     progress: 100,
     dueDate: '2024-07-03',
