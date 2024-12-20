@@ -8,6 +8,7 @@ import { TextureLoader } from 'three';
 import { feature } from 'topojson-client';
 import { useWorldTopology } from '@/lib/hooks/useWorldTopology';
 import { ThreeEvent } from '@react-three/fiber';
+import type { Topology, GeometryCollection, Objects } from 'topojson-specification';
 
 interface GlobeSceneProps {
   markers: MapMarker[];
@@ -109,6 +110,27 @@ function createGlowTexture() {
   return texture;
 }
 
+// Add this interface to properly type the topology
+interface WorldTopology extends Topology<{
+  countries: GeometryCollection;
+}> {
+  type: "Topology";
+  objects: {
+    countries: {
+      type: "GeometryCollection";
+      geometries: Array<{
+        type: string;
+        id: string;
+        properties: { name: string };
+        geometry: {
+          type: "Polygon" | "MultiPolygon";
+          coordinates: number[][][];
+        };
+      }>;
+    };
+  };
+}
+
 export function GlobeScene({ 
   markers, 
   onMarkerClick,
@@ -187,7 +209,7 @@ export function GlobeScene({
   const countryGeometries = useMemo(() => {
     if (!topology) return [];
     
-    const countries = feature(topology, topology.objects.countries);
+    const countries = feature(topology as WorldTopology, (topology as WorldTopology).objects.countries);
     return countries.features.map((country: any) => {
       try {
         const { vertices, indices } = processCountryGeometry(country.geometry, radius);

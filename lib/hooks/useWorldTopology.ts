@@ -1,14 +1,24 @@
 import { useState, useEffect } from 'react';
+import type { Topology, GeometryCollection } from 'topojson-specification';
 
-interface WorldTopology {
-  type: string;
+interface WorldTopology extends Topology<{
+  countries: GeometryCollection;
+}> {
+  type: "Topology";
   objects: {
     countries: {
-      type: string;
-      geometries: any[];
+      type: "GeometryCollection";
+      geometries: Array<{
+        type: string;
+        id: string;
+        properties: { name: string };
+        geometry: {
+          type: "Polygon" | "MultiPolygon";
+          coordinates: number[][][];
+        };
+      }>;
     };
   };
-  arcs: any[];
 }
 
 export function useWorldTopology() {
@@ -25,15 +35,7 @@ export function useWorldTopology() {
         return response.json();
       })
       .then(data => {
-        if (!data.type || !data.objects?.countries || !data.arcs) {
-          throw new Error('Invalid topology data structure');
-        }
-        console.log('Loaded topology data:', {
-          type: data.type,
-          objectKeys: Object.keys(data.objects),
-          arcsLength: data.arcs?.length
-        });
-        setTopology(data);
+        setTopology(data as WorldTopology);
         setLoading(false);
       })
       .catch(error => {
