@@ -30,32 +30,30 @@ function RiskScoreCardComponent({ className }: RiskScoreCardProps) {
 
   return (
     <Card className={cn("p-6", className)}>
-      <CardHeader 
-        title={
-          <div className="flex items-center gap-2">
-            Overall Almunakh Score<sup className="text-xs font-normal">TM</sup>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="h-4 w-4 text-muted-foreground" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  The Overall Almunakh Score™ is calculated based on your preparedness for short-term and long-term climate risks and opportunities (0 is lowest, 100 is highest).
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        } 
-      />
+      <div className="flex items-center gap-2 mb-6">
+        <span className="text-lg font-semibold">
+          Overall Almunakh Score™
+        </span>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <Info className="h-4 w-4 text-muted-foreground" />
+            </TooltipTrigger>
+            <TooltipContent className="max-w-xs">
+              The Overall Almunakh Score™ is calculated based on your preparedness for short-term and long-term climate risks and opportunities (0 is lowest, 100 is highest).
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
       <div className="flex flex-col items-center justify-center">
         <div 
-          className="text-8xl font-bold text-center"
+          className="text-8xl font-bold text-center leading-none"
           style={{ color: scoreColor }}
         >
           {score}
         </div>
         <div className={cn(
-          "mt-4 flex items-center gap-2 text-lg",
+          "mt-2 flex items-center gap-2 text-lg",
           trend < 0 ? "text-red-500" : "text-green-500"
         )}>
           {trend < 0 ? (
