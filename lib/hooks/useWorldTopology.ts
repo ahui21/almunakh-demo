@@ -1,25 +1,15 @@
 import { useState, useEffect } from 'react';
-import type { Topology, GeometryCollection } from 'topojson-specification';
+import type { Topology, GeometryObject } from 'topojson-specification';
 
 interface WorldTopology extends Topology<{
-  countries: GeometryCollection;
-}> {
-  type: "Topology";
-  objects: {
-    countries: {
-      type: "GeometryCollection";
-      geometries: Array<{
-        type: string;
-        id: string;
-        properties: { name: string };
-        geometry: {
-          type: "Polygon" | "MultiPolygon";
-          coordinates: number[][][];
-        };
-      }>;
-    };
+  countries: {
+    type: 'GeometryCollection';
+    geometries: Array<GeometryObject & {
+      id: string;
+      properties: { name: string };
+    }>;
   };
-}
+}> {}
 
 export function useWorldTopology() {
   const [topology, setTopology] = useState<WorldTopology | null>(null);
