@@ -242,7 +242,6 @@ export function GlobeScene({
     console.error('Failed to load world topology:', error);
   }
 
-  // Rest of the render code remains the same...
   return (
     <group ref={globeRef}>
       {/* Base sphere */}
@@ -295,8 +294,8 @@ export function GlobeScene({
           <lineBasicMaterial
             color="#4A90E2" // Bright blue color
             transparent
-            opacity={0.6} // Increased opacity
-            linewidth={4} // Thicker lines
+            opacity={0.6}
+            linewidth={12} // Increased from 4 to 12
           />
         </lineSegments>
       ))}
@@ -309,16 +308,16 @@ export function GlobeScene({
               attach="attributes-position"
               count={country.vertices.length / 3}
               array={new Float32Array(country.vertices.map((v, i) => 
-              v * (1 + (i % 3 === 0 ? 0.0002 : 0)) // Increased offset for more visible glow
+              v * (1 + (i % 3 === 0 ? 0.0004 : 0)) // Increased offset for thicker glow
             ))}
               itemSize={3}
             />
           </bufferGeometry>
           <lineBasicMaterial
-            color="#4A90E2" // Matching blue color
+            color="#4A90E2"
             transparent
             opacity={0.3}
-            linewidth={6} // Even thicker for glow effect
+            linewidth={18} // Increased from 6 to 18
           />
         </lineSegments>
       ))}
