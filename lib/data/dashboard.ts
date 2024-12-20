@@ -114,7 +114,7 @@ export const mapMarkers: MapMarker[] = [
     startDate: "2024-08-20",
     endDate: "2024-08-22",
     affectedAreas: [
-      "SYD Maintenace",
+      "SYD Maintenance",
       "SYD Operations"
     ]
   },

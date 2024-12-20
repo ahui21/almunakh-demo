@@ -16,7 +16,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { PremiumOverlay } from '@/components/ui/premium-overlay';
 import { useState } from 'react';
 
-const premiumOnlyMessage = "Sorry, this is only available for premium users only.";
+const premiumOnlyMessage = "This feature is only available for premium users.";
 
 export function Sidebar() {
   const pathname = usePathname();
