@@ -12,6 +12,19 @@ import { cn } from '@/lib/utils';
 import type { MapMarker } from '@/lib/types/dashboard';
 import { mapMarkers } from '@/lib/data/dashboard';
 
+// Add mock data for now - replace with real data later
+const mockCountryRisks = [
+  { id: 'USA', score: 0.75 },
+  { id: 'GBR', score: 0.5 },
+  { id: 'FRA', score: 0.3 },
+  // Add more countries as needed
+];
+
+const mockWorldRiskData = [
+  { id: 'WRI', name: 'World Risk Index', value: 0.65 },
+  // Add more risk data as needed
+];
+
 interface GlobalMapProps {
   className?: string;
 }
@@ -35,7 +48,6 @@ export function GlobalMap({ className }: GlobalMapProps) {
 
   // Handle click away
   const handleBackgroundClick = (event: ThreeEvent<MouseEvent>) => {
-    // Only close if clicking on the globe background, not a marker
     if ((event.object as any).type === 'Mesh' && !(event.object as any).userData?.isMarker) {
       setSelectedMarker(null);
     }
@@ -69,6 +81,8 @@ export function GlobalMap({ className }: GlobalMapProps) {
               selectedMetric="World Risk Index"
               onMarkerClick={handleMarkerClick}
               onBackgroundClick={handleBackgroundClick}
+              countryRisks={mockCountryRisks}
+              worldRiskData={mockWorldRiskData}
             />
             
             <CameraControls />
