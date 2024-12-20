@@ -7,14 +7,6 @@ export interface Location {
   trend: 'up' | 'down';
 }
 
-export interface Risk {
-  id: number;
-  name: string;
-  score: number;
-  trend: 'up' | 'down';
-  icon: LucideIcon;
-}
-
 export interface Task {
   id: number;
   name: string;
@@ -42,27 +34,6 @@ export interface MapMarker {
   startDate: string;
   endDate: string;
   affectedAreas: string[];
-}
-
-export type RiskMetric = 'World Risk Index' | 'Natural Disasters' | 'Infrastructure';
-
-export type TrendDirection = 'up' | 'down' | 'stable';
-
-export interface CountryData {
-  id: string;
-  country: string;
-  scores: {
-    [key in RiskMetric]?: number;
-  };
-  year: number;
-}
-
-export interface WorldRiskData {
-  id: string;
-  name: string;
-  value: number;
-  trend: TrendDirection;
-  lastUpdated: string;
 }
 
 export interface Initiative {

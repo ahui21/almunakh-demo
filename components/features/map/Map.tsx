@@ -4,9 +4,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './map.css';
-import type { MapMarker, CountryData, MarkerType, RiskMetric } from '@/lib/types/dashboard';
-import { scaleLinear } from 'd3-scale';
-import { cn } from '@/lib/utils';
+import type { MapMarker } from '@/lib/types/dashboard';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
 
@@ -17,8 +15,6 @@ interface CustomPopup extends mapboxgl.Popup {
 
 interface MapProps {
   markers?: MapMarker[];
-  selectedMetric?: RiskMetric;
-  countryRisks?: CountryData[];
   className?: string;
   onLoadingComplete?: () => void;
 }
@@ -37,172 +33,10 @@ interface MarkerRefs {
   [key: number]: mapboxgl.Marker;
 }
 
-interface PopupContent {
-  name: string;
-  score: number;
-  type: MarkerType;
-  startDate: string;
-  endDate: string;
-  affectedAreas: string[];
-}
-
-// Utility functions for marker and popup styling
-function getMarkerColor(score: number): string {
-  if (score >= 80) return '#EF4444';
-  if (score >= 50) return '#F59E0B';
-  return '#22C55E';
-}
-
-function getTypeColor(type: MarkerType): string {
-  switch (type) {
-    case 'Hurricane':
-      return '#3B82F6';
-    case 'Drought':
-      return '#F97316';
-    case 'Heat Wave':
-      return '#EF4444';
-    default:
-      return '#6B7280';
-  }
-}
-
-function createPopupHTML(content: PopupContent): string {
-  const {name, score, type, startDate, endDate, affectedAreas} = content;
-  return `
-    <div style="
-      font-family: var(--font-inter);
-      padding: 8px;
-      width: 320px;
-      border-radius: 6px;
-      background-color: #EFF6FF;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    ">
-      <!-- Header -->
-      <div style="
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin: -8px;
-        margin-bottom: 8px;
-        padding: 12px 16px;
-        background-color: #1e40af;
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
-      ">
-        <!-- Left side: Name -->
-        <h3 style="
-          margin: 0;
-          font-size: 18px;
-          font-weight: 600;
-          color: white;
-          line-height: 1.2;
-        ">${name}</h3>
-        <!-- Right side: Score and Type -->
-        <div style="
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        ">
-          <div style="
-            padding: 4px 8px;
-            border-radius: 4px;
-            background-color: ${getMarkerColor(score)};
-            font-size: 17px;
-            font-weight: 700;
-            color: white;
-            min-width: 32px;
-            text-align: center;
-          ">${score}</div>
-          <div style="
-            padding: 4px 8px;
-            border-radius: 4px;
-            background-color: ${getTypeColor(type)};
-            font-size: 14px;
-            font-weight: 500;
-            color: white;
-          ">${type}</div>
-        </div>
-      </div>
-      <!-- Content -->
-      <div style="padding: 0 12px;">
-        <div style="
-          display: grid;
-          grid-template-columns: 1fr 2fr;
-          gap: 16px;
-        ">
-          <!-- Column 1: Dates -->
-          <div>
-            <div>
-              <div style="
-                font-size: 14px;
-                color: #1e40af;
-                opacity: 0.8;
-                margin-bottom: 4px;
-              ">Start Date</div>
-              <div style="
-                font-size: 15px;
-                color: #1e40af;
-                font-weight: 500;
-                margin-bottom: 12px;
-              ">${new Date(startDate).toLocaleDateString()}</div>
-            </div>
-            <div>
-              <div style="
-                font-size: 14px;
-                color: #1e40af;
-                opacity: 0.8;
-                margin-bottom: 4px;
-              ">End Date</div>
-              <div style="
-                font-size: 15px;
-                color: #1e40af;
-                font-weight: 500;
-              ">${new Date(endDate).toLocaleDateString()}</div>
-            </div>
-          </div>
-          <!-- Column 2: Locations -->
-          <div>
-            <div style="
-              font-size: 14px;
-              color: #1e40af;
-              opacity: 0.8;
-              margin-bottom: 4px;
-            ">Affected Areas</div>
-            <ul style="
-              margin: 0;
-              padding-left: 16px;
-              color: #1e40af;
-              font-size: 15px;
-              line-height: 1.4;
-            ">
-              ${affectedAreas.map(area => `
-                <li style="margin-bottom: 4px;">${area}</li>
-              `).join('')}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// Update the color scale utility function
-const colorScale = scaleLinear<string>()
-  .domain([0, 25, 50, 75, 100])  // More granular scale points
-  .range([
-    '#22C55E',  // Dark green (0)
-    '#86EFAC',  // Light green (25)
-    '#FCD34D',  // Yellow (50)
-    '#F97316',  // Orange (75)
-    '#EF4444'   // Red (100)
-  ])
-  .clamp(true); // Ensure values outside 0-100 are clamped to the range
-
 // Main component
 export default function MapComponent(props?: MapProps) {
   const {
     markers = [],
-    selectedMetric = 'World Risk Index',
     onLoadingComplete
   } = props || {};
 
@@ -210,32 +44,8 @@ export default function MapComponent(props?: MapProps) {
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<MarkerRefs>({});
   const activePopup = useRef<CustomPopup | null>(null);
-  const countryDataRef = useRef<Map<string, Record<RiskMetric, number>>>(new Map());
   const hoveredStateId = useRef<string | number | null>(null);
   const hoverPopup = useRef<mapboxgl.Popup | null>(null);
-
-  // Move loadMapData inside the component to access countryDataRef
-  const loadMapData = useCallback(async () => {
-    try {
-      const response = await fetch('/data/world_risk_index_cleaned.csv');
-      if (!response.ok) {
-        throw new Error('Failed to fetch CSV data');
-      }
-      const data = await response.text();
-      const rows = data.split('\n').slice(1);
-      
-      rows.forEach(row => {
-        const [country, wri, exposure, vulnerability, susceptibility, coping, adaptive] = row.split(',');
-        countryDataRef.current.set(country.trim(), {
-          'World Risk Index': parseFloat(wri),
-          'Natural Disasters': parseFloat(exposure),
-          'Infrastructure': (1 - parseFloat(vulnerability)) * 100
-        });
-      });
-    } catch (error) {
-      console.error('Error loading country data:', error);
-    }
-  }, []);
 
   // Move the helper functions here
   const setupMapLayers = useCallback((map: mapboxgl.Map) => {
@@ -250,15 +60,7 @@ export default function MapComponent(props?: MapProps) {
       source: 'countries',
       'source-layer': 'country_boundaries',
       paint: {
-        'fill-color': [
-          'match',
-          ['get', 'name_en'],
-          ...Array.from(countryDataRef.current.entries()).flatMap(([country, data]) => [
-            country,
-            colorScale(data[selectedMetric] || 0)
-          ]),
-          '#cccccc'
-        ],
+        'fill-color': '#cccccc',
         'fill-opacity': 0.7
       }
     });
@@ -278,7 +80,7 @@ export default function MapComponent(props?: MapProps) {
         ]
       }
     });
-  }, [selectedMetric]);
+  }, []);
 
   const setupMapInteractions = useCallback((map: mapboxgl.Map) => {
     map.on('mousemove', 'country-fills', (e) => {
@@ -299,38 +101,31 @@ export default function MapComponent(props?: MapProps) {
         }
 
         const countryName = e.features[0].properties?.name_en;
-        const countryData = countryDataRef.current.get(countryName);
-        if (countryData) {
-          const score = countryData[selectedMetric];
-          map.getCanvas().style.cursor = 'pointer';
-          
-          // Remove existing hover popup if any
-          if (hoverPopup.current) {
-            hoverPopup.current.remove();
-          }
-          
-          // Create new popup
-          hoverPopup.current = new mapboxgl.Popup({
-            closeButton: false,
-            closeOnClick: false
-          })
-            .setLngLat(e.lngLat)
-            .setHTML(`
-              <div style="
-                font-family: var(--font-inter);
-                padding: 8px;
-                background-color: white;
-                border-radius: 4px;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-              ">
-                <div style="font-weight: 500;">${countryName}</div>
-                <div style="color: #666;">
-                  ${selectedMetric}: ${score.toFixed(1)}
-                </div>
-              </div>
-            `)
-            .addTo(map);
+        map.getCanvas().style.cursor = 'pointer';
+        
+        // Remove existing hover popup if any
+        if (hoverPopup.current) {
+          hoverPopup.current.remove();
         }
+        
+        // Create new popup
+        hoverPopup.current = new mapboxgl.Popup({
+          closeButton: false,
+          closeOnClick: false
+        })
+          .setLngLat(e.lngLat)
+          .setHTML(`
+            <div style="
+              font-family: var(--font-inter);
+              padding: 8px;
+              background-color: white;
+              border-radius: 4px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            ">
+              <div style="font-weight: 500;">${countryName}</div>
+            </div>
+          `)
+          .addTo(map);
       }
     });
 
@@ -350,7 +145,7 @@ export default function MapComponent(props?: MapProps) {
         hoverPopup.current = null;
       }
     });
-  }, [selectedMetric]);
+  }, []);
 
   // Initial map setup and country data loading
   useEffect(() => {
@@ -374,7 +169,6 @@ export default function MapComponent(props?: MapProps) {
       map.current = newMap;
       
       try {
-        await loadMapData();
         if (mounted) {
           setupMapLayers(newMap);
           setupMapInteractions(newMap);
@@ -390,22 +184,7 @@ export default function MapComponent(props?: MapProps) {
       mounted = false;
       map.current?.remove();
     };
-  }, [onLoadingComplete, setupMapInteractions, setupMapLayers, loadMapData]);
-
-  // Update colors when metric changes
-  useEffect(() => {
-    if (!map.current || !map.current.getLayer('country-fills')) return;
-
-    map.current.setPaintProperty('country-fills', 'fill-color', [
-      'match',
-      ['get', 'name_en'],
-      ...Array.from(countryDataRef.current.entries()).flatMap(([country, data]) => [
-        country,
-        colorScale(data[selectedMetric] || 0)
-      ]),
-      '#cccccc'
-    ]);
-  }, [selectedMetric]);
+  }, [onLoadingComplete, setupMapInteractions, setupMapLayers]);
 
   const cleanup = () => {
     if (map.current) {
