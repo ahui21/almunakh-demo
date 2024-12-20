@@ -10,9 +10,21 @@ export interface WorldRiskData {
   'Lack of Adaptive Capacities': number;
 }
 
+const columnMap = {
+  'World Risk Index': 1,
+  'Exposure': 2,
+  'Vulnerability': 3,
+  'Susceptibility': 4,
+  'Lack of Coping Capabilities': 5,
+  'Lack of Adaptive Capacities': 6
+} as const;
+
 export async function loadWorldRiskData(): Promise<WorldRiskData[]> {
   try {
     const response = await fetch('/data/world_risk_index_cleaned.csv');
+    if (!response.ok) {
+      throw new Error('Failed to fetch CSV data');
+    }
     const text = await response.text();
     
     const records = parse(text, {
