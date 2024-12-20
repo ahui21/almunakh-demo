@@ -135,7 +135,7 @@ export function GlobeScene({
 
   // Load textures
   const [earthTexture, cloudsTexture] = useLoader(TextureLoader, [
-    '/textures/earth-dark.jpg',
+    '/textures/earth-blue-marble.jpg',
     '/textures/clouds.png'
   ]);
 
