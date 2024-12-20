@@ -33,14 +33,12 @@ function CameraControls() {
 export function GlobalMap({ className }: GlobalMapProps) {
   const [selectedMarker, setSelectedMarker] = useState<MapMarker | null>(null);
 
-  // Handle click away
   const handleBackgroundClick = (event: ThreeEvent<MouseEvent>) => {
     if ((event.object as any).type === 'Mesh' && !(event.object as any).userData?.isMarker) {
       setSelectedMarker(null);
     }
   };
 
-  // Handle marker click
   const handleMarkerClick = (marker: MapMarker) => {
     setSelectedMarker(current => current?.id === marker.id ? null : marker);
   };
@@ -65,7 +63,6 @@ export function GlobalMap({ className }: GlobalMapProps) {
             
             <GlobeScene 
               markers={mapMarkers}
-              selectedMetric="World Risk Index"
               onMarkerClick={handleMarkerClick}
               onBackgroundClick={handleBackgroundClick}
             />
