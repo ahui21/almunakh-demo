@@ -26,37 +26,6 @@ function latLongToVector3(lat: number, lon: number, radius: number): THREE.Vecto
   return new THREE.Vector3(x, y, z);
 }
 
-function createGlowTexture() {
-  const size = 64;
-  const data = new Uint8Array(size * size * 4);
-  
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      const index = (i * size + j) * 4;
-      const x = (j / size - 0.5) * 2;
-      const y = (i / size - 0.5) * 2;
-      const distance = Math.sqrt(x * x + y * y);
-      const intensity = Math.max(0, 1 - distance);
-      const alpha = Math.pow(intensity, 2);
-      
-      data[index] = 255;     // R
-      data[index + 1] = 255; // G
-      data[index + 2] = 255; // B
-      data[index + 3] = alpha * 255; // A
-    }
-  }
-  
-  const texture = new THREE.DataTexture(
-    data,
-    size,
-    size,
-    THREE.RGBAFormat,
-    THREE.UnsignedByteType
-  );
-  texture.needsUpdate = true;
-  return texture;
-}
-
 function getColorForScore(score: number): string {
   if (score >= 75) return '#E74C3C'; // Red for high risk
   if (score >= 50) return '#F97316'; // Orange for medium-high risk
@@ -68,8 +37,8 @@ function processCountryGeometry(geometry: any, radius: number) {
   if (geometry.type === 'Polygon') {
     return processPolygon(geometry.coordinates, radius);
   } else if (geometry.type === 'MultiPolygon') {
-    const allVertices = [];
-    const allIndices = [];
+    const allVertices: number[] = [];
+    const allIndices: number[] = [];
     let vertexOffset = 0;
 
     geometry.coordinates.forEach((polygon: any) => {
@@ -107,6 +76,37 @@ function processPolygon(coordinates: any[], radius: number) {
   }
   
   return { vertices, indices };
+}
+
+function createGlowTexture() {
+  const size = 64;
+  const data = new Uint8Array(size * size * 4);
+  
+  for (let i = 0; i < size; i++) {
+    for (let j = 0; j < size; j++) {
+      const index = (i * size + j) * 4;
+      const x = (j / size - 0.5) * 2;
+      const y = (i / size - 0.5) * 2;
+      const distance = Math.sqrt(x * x + y * y);
+      const intensity = Math.max(0, 1 - distance);
+      const alpha = Math.pow(intensity, 2);
+      
+      data[index] = 255;     // R
+      data[index + 1] = 255; // G
+      data[index + 2] = 255; // B
+      data[index + 3] = alpha * 255; // A
+    }
+  }
+  
+  const texture = new THREE.DataTexture(
+    data,
+    size,
+    size,
+    THREE.RGBAFormat,
+    THREE.UnsignedByteType
+  );
+  texture.needsUpdate = true;
+  return texture;
 }
 
 export function GlobeScene({ 
@@ -147,6 +147,35 @@ export function GlobeScene({
   }), [cloudsTexture]);
 
   const sphereGeometry = useMemo(() => new THREE.SphereGeometry(radius, 64, 64), []);
+
+  const glowMaterial = useMemo(() => new THREE.ShaderMaterial({
+    uniforms: {
+      glowColor: { value: new THREE.Color('#4A90E2') },
+      viewVector: { value: camera.position }
+    },
+    vertexShader: `
+      uniform vec3 viewVector;
+      varying float intensity;
+      void main() {
+        vec3 vNormal = normalize(normalMatrix * normal);
+        vec3 vNormel = normalize(normalMatrix * viewVector);
+        intensity = pow(0.6 - dot(vNormal, vNormel), 2.0);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 glowColor;
+      varying float intensity;
+      void main() {
+        vec3 glow = glowColor * intensity;
+        gl_FragColor = vec4(glow, 1.0);
+      }
+    `,
+    side: THREE.BackSide,
+    blending: THREE.AdditiveBlending,
+    transparent: true
+  }), [camera.position]);
+
   const glowTexture = useMemo(() => createGlowTexture(), []);
 
   const markerPositions = useMemo(() => 
@@ -199,15 +228,19 @@ export function GlobeScene({
 
   return (
     <group ref={globeRef}>
-      {/* Base sphere with earth texture */}
+      {/* Atmosphere glow */}
+      <mesh geometry={sphereGeometry} material={glowMaterial} scale={1.1} />
+      
+      {/* Base sphere */}
       <mesh 
         geometry={sphereGeometry} 
         material={sphereMaterial}
         onClick={onBackgroundClick}
       />
       
-      {/* Country borders */}
-      {countryGeometries.map((country, i) => (
+      {/* Country borders with glow */}
+      {countryGeometries.map((country, i) => [
+        // Main border
         <lineSegments key={`border-${i}`}>
           <bufferGeometry>
             <bufferAttribute
@@ -227,10 +260,30 @@ export function GlobeScene({
             color="#4A90E2"
             transparent
             opacity={0.6}
-            linewidth={1}
+            linewidth={12}
+          />
+        </lineSegments>,
+
+        // Border glow
+        <lineSegments key={`border-glow-${i}`}>
+          <bufferGeometry>
+            <bufferAttribute
+              attach="attributes-position"
+              count={country.vertices.length / 3}
+              array={new Float32Array(country.vertices.map((v, i) => 
+                v * (1 + (i % 3 === 0 ? 0.0004 : 0))
+              ))}
+              itemSize={3}
+            />
+          </bufferGeometry>
+          <lineBasicMaterial
+            color="#4A90E2"
+            transparent
+            opacity={0.3}
+            linewidth={18}
           />
         </lineSegments>
-      ))}
+      ])}
 
       {/* Clouds layer */}
       <mesh 

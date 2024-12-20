@@ -360,7 +360,7 @@ export default function MapComponent(props?: MapProps) {
       mounted = false;
       map.current?.remove();
     };
-  }, []);
+  }, [onLoadingComplete, setupMapInteractions, setupMapLayers]);
 
   // Update colors when metric changes
   useEffect(() => {
