@@ -254,7 +254,7 @@ export function GlobeScene({
       {countryGeometries
         .filter((country): country is NonNullable<typeof country> => country !== null)
         .map((country, i) => [
-          // Main border
+          // Main border - much thicker and brighter
           <lineSegments key={`border-${i}`}>
             <bufferGeometry>
               <bufferAttribute
@@ -271,30 +271,30 @@ export function GlobeScene({
               />
             </bufferGeometry>
             <lineBasicMaterial
-              color="#4A90E2"
+              color="#FFFFFF"
               transparent
-              opacity={0.6}
-              linewidth={12}
+              opacity={1.0}     // Full opacity
+              linewidth={48}    // Doubled again
             />
           </lineSegments>,
 
-          // Border glow
+          // Border glow - much larger and more intense
           <lineSegments key={`border-glow-${i}`}>
             <bufferGeometry>
               <bufferAttribute
                 attach="attributes-position"
                 count={country.vertices.length / 3}
                 array={new Float32Array(country.vertices.map((v, i) => 
-                  v * (1 + (i % 3 === 0 ? 0.0004 : 0))
+                  v * (1 + (i % 3 === 0 ? 0.003 : 0))  // Triple glow size
                 ))}
                 itemSize={3}
               />
             </bufferGeometry>
             <lineBasicMaterial
-              color="#4A90E2"
+              color="#FFFFFF"
               transparent
-              opacity={0.3}
-              linewidth={18}
+              opacity={0.6}     // Increased glow opacity
+              linewidth={72}    // Doubled glow width
             />
           </lineSegments>
         ])}
