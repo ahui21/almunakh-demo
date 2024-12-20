@@ -3,6 +3,7 @@
 import { useState, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import * as THREE from 'three';
 import { GlobeScene } from './map/GlobeScene';
 import { MarkerInfoCard } from './map/MarkerInfoCard';
 import { Card } from '@/components/ui/card';
