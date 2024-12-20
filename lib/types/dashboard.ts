@@ -46,3 +46,11 @@ export interface Initiative {
   subInitiatives?: SubInitiative[];
   tasks?: Task[];
 }
+
+export interface Risk {
+  id: number;
+  name: string;
+  score: number;
+  trend: 'up' | 'down';
+  icon: LucideIcon;
+}
