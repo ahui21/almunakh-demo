@@ -30,7 +30,7 @@ function RiskScoreCardComponent({ className }: RiskScoreCardProps) {
 
   return (
     <Card className={cn("p-6", className)}>
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex items-center gap-2 mb-3">
         <span className="text-lg font-semibold">
           Overall Almunakh Score™
         </span>

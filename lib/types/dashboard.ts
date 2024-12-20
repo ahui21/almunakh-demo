@@ -45,14 +45,14 @@ export interface SubInitiative {
 export type MarkerType = 'Hurricane' | 'Drought' | 'Heat Wave';
 
 export interface MapMarker {
-  id: number;
+  id: string;
   name: string;
-  coordinates: [number, number];
-  type: MarkerType;
+  type: string;
   score: number;
+  coordinates: [number, number];
   startDate: string;
   endDate: string;
-  affectedAreas: string[];
+  affectedAreas?: string[];
 }
 
 export type RiskMetric = 

@@ -130,44 +130,44 @@ export const initiatives: DashboardInitiative[] = [
 ];
 
 export const mapMarkers: MapMarker[] = [
-  { 
-    id: 1,
-    name: "Hurricane Sandy", 
-    coordinates: [-74.006, 40.7128], 
-    type: "Hurricane",
+  {
+    id: '1',
+    name: 'Hurricane Sandy',
+    type: 'Hurricane',
     score: 85,
-    startDate: "2024-08-27",
-    endDate: "2024-08-29",
+    coordinates: [-74.006, 40.7128],
+    startDate: '2024-08-26',
+    endDate: '2024-08-28',
     affectedAreas: [
-      "JFK Flight Hub",
-      "JFK Operations",
-      "LGA Maintenance"
+      'JFK Flight Hub',
+      'JFK Operations',
+      'LGA Maintenance'
     ]
   },
   { 
-    id: 2,
-    name: "Heat Wave", 
-    coordinates: [12.4822, 41.8967], 
-    type: "Heat Wave",
-    score: 78,
-    startDate: "2024-08-29",
-    endDate: "2024-08-31",
+    id: '2',
+    name: 'Heat Wave',
+    type: 'Heat Wave',
+    score: 42,
+    coordinates: [12.4964, 41.9028],
+    startDate: '2024-08-29',
+    endDate: '2024-08-31',
     affectedAreas: [
-      "FCO Flight Hub",
-      "FCO Maintenance"
+      'FCO Flight Hub',
+      'FCO Maintenance'
     ]
   },
   { 
-    id: 3,
-    name: "Drought", 
-    coordinates: [151.2093, -33.8688], 
-    type: "Drought",
+    id: '3',
+    name: 'Drought',
+    type: 'Drought',
     score: 20,
-    startDate: "2024-08-20",
-    endDate: "2024-08-22",
+    coordinates: [151.2093, -33.8688],
+    startDate: '2024-08-20',
+    endDate: '2024-08-22',
     affectedAreas: [
-      "SYD Maintenance",
-      "SYD Operations"
+      'SYD Maintenance',
+      'SYD Operations'
     ]
-  },
+  }
 ];
