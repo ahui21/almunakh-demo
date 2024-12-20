@@ -25,12 +25,13 @@ export interface Task {
 export interface Initiative {
   id: number;
   name: string;
+  description: string;
   status: 'In Progress' | 'Completed' | 'Planning';
   progress: number;
   dueDate: string;
-  poc: string;
-  subInitiatives?: SubInitiative[];
-  tasks?: Task[];
+  location: string;
+  risk: string;
+  subInitiatives: SubInitiative[];
 }
 
 export interface SubInitiative {
@@ -52,19 +53,26 @@ export interface MapMarker {
   coordinates: [number, number];
   startDate: string;
   endDate: string;
-  affectedAreas?: string[];
+  affectedAreas: string[];
 }
 
-export type RiskMetric = 
-  | 'World Risk Index'
-  | 'Exposure'
-  | 'Vulnerability'
-  | 'Susceptibility'
-  | 'Lack of Coping Capabilities'
-  | 'Lack of Adaptive Capacities';
+export type RiskMetric = 'World Risk Index' | 'Natural Disasters' | 'Infrastructure';
+
+export type TrendDirection = 'up' | 'down' | 'stable';
 
 export interface CountryData {
+  id: string;
   country: string;
-  scores: Record<RiskMetric, number>;
+  scores: {
+    [key in RiskMetric]?: number;
+  };
   year: number;
+}
+
+export interface WorldRiskData {
+  id: string;
+  name: string;
+  value: number;
+  trend: TrendDirection;
+  lastUpdated: string;
 }
