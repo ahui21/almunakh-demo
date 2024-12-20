@@ -1,164 +1,49 @@
 import { NextResponse } from 'next/server';
-import type { RiskMetric, CountryData } from '@/lib/types/dashboard';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { logger } from '@/lib/utils/logger';
+import { parse } from 'csv-parse/sync';
+import type { CountryData, RiskMetric } from '@/lib/types/dashboard';
 
-interface CSVRow {
-  [key: string]: string;
-}
-
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(request.url);
-    const metric = searchParams.get('metric') as RiskMetric;
+    const filePath = path.join(process.cwd(), 'public/data/world_risk_index.csv');
+    const fileContent = await fs.readFile(filePath, 'utf-8');
+    
+    const records = parse(fileContent, {
+      columns: true,
+      skip_empty_lines: true
+    });
 
-    console.log('API Route - Received request for metric:', metric);
+    const countryMap = new Map<string, CountryData>();
 
-    if (!metric) {
-      console.log('API Route - Missing metric parameter');
-      return NextResponse.json(
-        { error: 'Metric parameter is required' },
-        { status: 400 }
-      );
-    }
+    records.forEach((row: any, index: number) => {
+      try {
+        const countryCode = row['ISO 3'];
+        const year = parseInt(row['Year']);
+        
+        const data: CountryData = {
+          id: countryCode,
+          country: row['Country'],
+          scores: {
+            'World Risk Index': parseFloat(row['WorldRiskIndex']) * 100,
+            'Natural Disasters': parseFloat(row['Exposure']) * 100,
+            'Infrastructure': (1 - parseFloat(row['Vulnerability'])) * 100
+          },
+          year
+        };
 
-    // Validate metric value
-    const validMetrics = [
-      'World Risk Index',
-      'Exposure',
-      'Vulnerability',
-      'Susceptibility',
-      'Lack of Coping Capabilities',
-      'Lack of Adaptive Capacities'
-    ];
-
-    if (!validMetrics.includes(metric)) {
-      console.log('API Route - Invalid metric:', metric);
-      return NextResponse.json(
-        { error: `Invalid metric. Must be one of: ${validMetrics.join(', ')}` },
-        { status: 400 }
-      );
-    }
-
-    // Read and process file
-    try {
-      const filePath = path.join(process.cwd(), 'public', 'data', 'world_risk_index.csv');
-      const fileContent = await fs.readFile(filePath, 'utf-8');
-      
-      // Parse CSV
-      const lines = fileContent.split('\n').filter(line => line.trim().length > 0);
-      const headers = lines[0].split(',').map(header => header.trim());
-      const rows = lines.slice(1);
-
-      console.log('API Route - Headers:', headers);
-      console.log('API Route - Number of data rows:', rows.length);
-
-      // Process data
-      const countryMap = new Map<string, CountryData>();
-      const errors: Array<{ row: number; error: string }> = [];
-
-      rows.forEach((row: string, index: number) => {
-        try {
-          const values = row.split(',').map((val: string) => val.trim());
-          const [
-            country,
-            wri, 
-            exposure, 
-            vulnerability, 
-            susceptibility, 
-            coping, 
-            adaptation,
-            year,
-          ] = values;
-
-          const scores = {
-            'World Risk Index': parseFloat(wri),
-            'Exposure': parseFloat(exposure),
-            'Vulnerability': parseFloat(vulnerability),
-            'Susceptibility': parseFloat(susceptibility),
-            'Lack of Coping Capabilities': parseFloat(coping.replace(/\s+/g, '')),
-            'Lack of Adaptive Capacities': parseFloat(adaptation),
-          };
-
-          // Validate scores
-          Object.entries(scores).forEach(([field, score]) => {
-            if (isNaN(score)) {
-              throw new Error(`Invalid ${field} score: not a number (value: ${values[headers.indexOf(field)]})`);
-            }
-            if (score < 0 || score > 100) {
-              throw new Error(`Invalid ${field} score: must be between 0 and 100 (value: ${score})`);
-            }
-          });
-
-          const yearNum = parseInt(year);
-          if (isNaN(yearNum)) {
-            throw new Error(`Invalid year: not a number (value: ${year})`);
-          }
-
-          const countryCode = country;
-          const data = {
-            country: countryCode,
-            scores,
-            year: yearNum
-          };
-
-          const existing = countryMap.get(countryCode);
-          if (!existing || existing.year < data.year) {
-            countryMap.set(countryCode, data);
-          }
-        } catch (err) {
-          console.warn(`Failed to process row ${index}:`, err);
+        const existing = countryMap.get(countryCode);
+        if (!existing || existing.year < data.year) {
+          countryMap.set(countryCode, data);
         }
-      });
-
-      if (errors.length > 0) {
-        logger.error('API Route - Validation errors:', errors);
-        return NextResponse.json(
-          { error: 'Data validation failed', details: errors },
-          { status: 400 }
-        );
+      } catch (err) {
+        console.warn(`Failed to process row ${index}:`, err);
       }
+    });
 
-      const result = Array.from(countryMap.values());
-      logger.info('API Route - Successfully processed records:', result.length);
-      
-      return NextResponse.json(result);
-    } catch (error) {
-      if (error instanceof Error) {
-        logger.error('API Route - Data processing error:', {
-          name: error.name,
-          message: error.message,
-          stack: error.stack
-        });
-      } else {
-        logger.error('API Route - Unknown error:', error);
-      }
-      return NextResponse.json(
-        { 
-          error: 'Failed to process data',
-          details: error instanceof Error ? error.message : String(error)
-        },
-        { status: 500 }
-      );
-    }
+    return NextResponse.json(Array.from(countryMap.values()));
   } catch (error) {
-    if (error instanceof Error) {
-      logger.error('API Route - Unexpected error:', {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      });
-    } else {
-      logger.error('API Route - Unknown error:', error);
-    }
-
-    return NextResponse.json(
-      { 
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : String(error)
-      },
-      { status: 500 }
-    );
+    console.error('Failed to load world risk data:', error);
+    return NextResponse.json({ error: 'Failed to load data' }, { status: 500 });
   }
 }
