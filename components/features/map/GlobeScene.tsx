@@ -251,51 +251,53 @@ export function GlobeScene({
       />
       
       {/* Country borders with glow */}
-      {countryGeometries.map((country, i) => [
-        // Main border
-        <lineSegments key={`border-${i}`}>
-          <bufferGeometry>
-            <bufferAttribute
-              attach="attributes-position"
-              count={country.vertices.length / 3}
-              array={new Float32Array(country.vertices)}
-              itemSize={3}
+      {countryGeometries
+        .filter((country): country is NonNullable<typeof country> => country !== null)
+        .map((country, i) => [
+          // Main border
+          <lineSegments key={`border-${i}`}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                count={country.vertices.length / 3}
+                array={new Float32Array(country.vertices)}
+                itemSize={3}
+              />
+              <bufferAttribute
+                attach="index"
+                count={country.indices.length}
+                array={new Uint16Array(country.indices)}
+                itemSize={1}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial
+              color="#4A90E2"
+              transparent
+              opacity={0.6}
+              linewidth={12}
             />
-            <bufferAttribute
-              attach="index"
-              count={country.indices.length}
-              array={new Uint16Array(country.indices)}
-              itemSize={1}
-            />
-          </bufferGeometry>
-          <lineBasicMaterial
-            color="#4A90E2"
-            transparent
-            opacity={0.6}
-            linewidth={12}
-          />
-        </lineSegments>,
+          </lineSegments>,
 
-        // Border glow
-        <lineSegments key={`border-glow-${i}`}>
-          <bufferGeometry>
-            <bufferAttribute
-              attach="attributes-position"
-              count={country.vertices.length / 3}
-              array={new Float32Array(country.vertices.map((v, i) => 
-                v * (1 + (i % 3 === 0 ? 0.0004 : 0))
-              ))}
-              itemSize={3}
+          // Border glow
+          <lineSegments key={`border-glow-${i}`}>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                count={country.vertices.length / 3}
+                array={new Float32Array(country.vertices.map((v, i) => 
+                  v * (1 + (i % 3 === 0 ? 0.0004 : 0))
+                ))}
+                itemSize={3}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial
+              color="#4A90E2"
+              transparent
+              opacity={0.3}
+              linewidth={18}
             />
-          </bufferGeometry>
-          <lineBasicMaterial
-            color="#4A90E2"
-            transparent
-            opacity={0.3}
-            linewidth={18}
-          />
-        </lineSegments>
-      ])}
+          </lineSegments>
+        ])}
 
       {/* Clouds layer */}
       <mesh 
