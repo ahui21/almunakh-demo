@@ -198,29 +198,6 @@ const colorScale = scaleLinear<string>()
   ])
   .clamp(true); // Ensure values outside 0-100 are clamped to the range
 
-// Add this function before the MapComponent
-async function loadMapData(): Promise<void> {
-  try {
-    const response = await fetch('/data/world_risk_index_cleaned.csv');
-    if (!response.ok) {
-      throw new Error('Failed to fetch CSV data');
-    }
-    const data = await response.text();
-    const rows = data.split('\n').slice(1);
-    
-    rows.forEach(row => {
-      const [country, wri, exposure, vulnerability, susceptibility, coping, adaptive] = row.split(',');
-      countryDataRef.current.set(country.trim(), {
-        'World Risk Index': parseFloat(wri),
-        'Natural Disasters': parseFloat(exposure),
-        'Infrastructure': (1 - parseFloat(vulnerability)) * 100
-      });
-    });
-  } catch (error) {
-    console.error('Error loading country data:', error);
-  }
-}
-
 // Main component
 export default function MapComponent(props?: MapProps) {
   const {
@@ -413,7 +390,7 @@ export default function MapComponent(props?: MapProps) {
       mounted = false;
       map.current?.remove();
     };
-  }, [onLoadingComplete, setupMapInteractions, setupMapLayers]);
+  }, [onLoadingComplete, setupMapInteractions, setupMapLayers, loadMapData]);
 
   // Update colors when metric changes
   useEffect(() => {
