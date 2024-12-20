@@ -90,19 +90,22 @@ function processCountryGeometry(geometry: any, radius: number) {
 function processPolygon(coordinates: any[], radius: number) {
   const vertices: number[] = [];
   const indices: number[] = [];
-  let vertexIndex = 0;
-
-  const ring = coordinates[0];
   
-  ring.forEach(([lon, lat]: number[]) => {
+  const ring = coordinates[0];
+  for (let i = 0; i < ring.length; i++) {
+    const [lon, lat] = ring[i];
     const point = latLongToVector3(lat, lon, radius * 1.001);
     vertices.push(point.x, point.y, point.z);
-  });
-
-  for (let i = 1; i < ring.length - 1; i++) {
-    indices.push(vertexIndex, vertexIndex + i, vertexIndex + i + 1);
+    
+    if (i > 0) {
+      indices.push(i - 1, i);
+    }
   }
-
+  // Close the loop
+  if (ring.length > 1) {
+    indices.push(ring.length - 1, 0);
+  }
+  
   return { vertices, indices };
 }
 
@@ -213,12 +216,18 @@ export function GlobeScene({
               array={new Float32Array(country.vertices)}
               itemSize={3}
             />
+            <bufferAttribute
+              attach="index"
+              count={country.indices.length}
+              array={new Uint16Array(country.indices)}
+              itemSize={1}
+            />
           </bufferGeometry>
           <lineBasicMaterial
             color="#4A90E2"
             transparent
             opacity={0.6}
-            linewidth={12}
+            linewidth={1}
           />
         </lineSegments>
       ))}

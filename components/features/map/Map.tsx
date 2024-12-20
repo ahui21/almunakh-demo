@@ -331,125 +331,36 @@ export default function MapComponent(props?: MapProps) {
 
   // Initial map setup and country data loading
   useEffect(() => {
-    if (!mapContainer.current || !mapboxgl.accessToken) return;
-
-    const newMap = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: [0, 20],
-      zoom: 2,
-      projection: 'mercator'
-    });
-
-    map.current = newMap;
-
-    // Load country data
-    newMap.on('load', async () => {
+    let mounted = true;
+    
+    const initMap = async () => {
+      if (!mapContainer.current || !mapboxgl.accessToken) return;
+      
+      const newMap = new mapboxgl.Map({/*...*/});
+      if (!mounted) {
+        newMap.remove();
+        return;
+      }
+      map.current = newMap;
+      
       try {
-        const response = await fetch('/data/world_risk_index_cleaned.csv');
-        const data = await response.text();
-        const rows = data.split('\n').slice(1);
-        
-        rows.forEach(row => {
-          const [country, wri, exposure, vulnerability, susceptibility, coping, adaptive] = row.split(',');
-          countryDataRef.current.set(country.trim(), {
-            'World Risk Index': parseFloat(wri),
-            'Exposure': parseFloat(exposure),
-            'Vulnerability': parseFloat(vulnerability),
-            'Susceptibility': parseFloat(susceptibility),
-            'Lack of Coping Capabilities': parseFloat(coping),
-            'Lack of Adaptive Capacities': parseFloat(adaptive)
-          });
-        });
-
-        setupMapLayers(newMap);
-        setupMapInteractions(newMap);
-
-        if (onLoadingComplete) {
-          onLoadingComplete();
+        await loadMapData();
+        if (mounted) {
+          setupMapLayers(newMap);
+          setupMapInteractions(newMap);
+          onLoadingComplete?.();
         }
       } catch (error) {
-        console.error('Error loading country data:', error);
+        console.error('Error initializing map:', error);
       }
-    });
-
-    // Inside the first useEffect, after the map.current = newMap; line
-    newMap.on('style.load', () => {
-      markers.forEach(marker => {
-        // Create marker element
-        const el = document.createElement('div') as HTMLDivElement;
-        el.className = 'marker';
-        Object.assign(el.style, {
-          width: '30px',
-          height: '30px',
-          backgroundColor: getMarkerColor(marker.score),
-          borderRadius: '50%',
-          border: '4px solid white',
-          boxShadow: '0 0 10px rgba(0,0,0,0.5)',
-          cursor: 'pointer'
-        } as MarkerStyle);
-
-        // Create marker
-        const mapMarker = new mapboxgl.Marker(el)
-          .setLngLat(marker.coordinates)
-          .addTo(newMap)
-          .on('dragend', () => {
-            const lngLat = mapMarker.getLngLat();
-            marker.coordinates = [lngLat.lng, lngLat.lat];
-          });
-
-        // Store marker reference
-        markersRef.current[marker.id] = mapMarker;
-
-        // Add click handler
-        el.onclick = (e: MouseEvent) => {
-          e.stopPropagation();
-          
-          // If there's an active popup and it's for this marker, remove it
-          if (activePopup.current && marker.id === activePopup.current.marker_id) {
-            activePopup.current.remove();
-            activePopup.current = null;
-            return;
-          }
-
-          // Remove any existing popup
-          if (activePopup.current) {
-            activePopup.current.remove();
-            activePopup.current = null;
-          }
-
-          // Create and show new popup
-          const popup = new mapboxgl.Popup({
-            offset: [0, -30],
-            closeButton: false,
-            className: 'custom-popup',
-            anchor: 'bottom'
-          }) as CustomPopup;
-
-          // Add marker_id to popup for identification
-          popup.marker_id = marker.id;
-
-          popup
-            .setLngLat(marker.coordinates)
-            .setHTML(createPopupHTML({
-              name: marker.name,
-              score: marker.score,
-              type: marker.type,
-              startDate: marker.startDate,
-              endDate: marker.endDate,
-              affectedAreas: marker.affectedAreas
-            }))
-            .addTo(newMap);
-
-          activePopup.current = popup;
-        };
-      });
-    });
-
-    return () => {
-      cleanup();
     };
-  }, [markers, onLoadingComplete, setupMapInteractions, setupMapLayers]);
+
+    initMap();
+    return () => {
+      mounted = false;
+      map.current?.remove();
+    };
+  }, []);
 
   // Update colors when metric changes
   useEffect(() => {

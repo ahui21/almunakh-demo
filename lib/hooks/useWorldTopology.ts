@@ -17,7 +17,7 @@ export function useWorldTopology() {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    fetch('https://unpkg.com/world-atlas@2/countries-50m.json')
+    fetch('/data/world.json')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -25,10 +25,19 @@ export function useWorldTopology() {
         return response.json();
       })
       .then(data => {
+        if (!data.type || !data.objects?.countries || !data.arcs) {
+          throw new Error('Invalid topology data structure');
+        }
+        console.log('Loaded topology data:', {
+          type: data.type,
+          objectKeys: Object.keys(data.objects),
+          arcsLength: data.arcs?.length
+        });
         setTopology(data);
         setLoading(false);
       })
       .catch(error => {
+        console.error('Failed to load topology:', error);
         setError(error);
         setLoading(false);
       });

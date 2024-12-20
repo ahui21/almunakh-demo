@@ -21,15 +21,24 @@ export async function loadWorldRiskData(): Promise<WorldRiskData[]> {
       delimiter: ',',
     });
 
-    return records.map((record: any) => ({
-      country: record.Region,
-      'World Risk Index': Number(record.WRI),
-      'Exposure': Number(record.Exposure),
-      'Vulnerability': Number(record.Vulnerability),
-      'Susceptibility': Number(record.Susceptibility),
-      'Lack of Coping Capabilities': Number(record['Lack of Coping Capabilities']),
-      'Lack of Adaptive Capacities': Number(record['Lack of Adaptive Capacities'])
-    }));
+    return records.map((record: any) => {
+      // Validate required fields
+      const required = ['Region', 'WRI', 'Exposure', 'Vulnerability', 'Susceptibility'];
+      for (const field of required) {
+        if (!(field in record)) {
+          throw new Error(`Missing required field: ${field}`);
+        }
+      }
+      return {
+        country: record.Region,
+        'World Risk Index': Number(record.WRI) || 0,
+        'Exposure': Number(record.Exposure) || 0,
+        'Vulnerability': Number(record.Vulnerability) || 0,
+        'Susceptibility': Number(record.Susceptibility) || 0,
+        'Lack of Coping Capabilities': Number(record['Lack of Coping Capabilities']) || 0,
+        'Lack of Adaptive Capacities': Number(record['Lack of Adaptive Capacities']) || 0
+      };
+    });
   } catch (error) {
     console.error('Error loading world risk data:', error);
     return [];
