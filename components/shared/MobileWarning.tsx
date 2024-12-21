@@ -32,7 +32,7 @@ export function MobileWarning() {
         </h1>
         <div className="rounded-lg overflow-hidden shadow-lg">
           <Image
-            src="/images/product-screenshot.png"
+            src="/images/product-screenshot-threejs.png"
             alt="Dashboard Preview"
             width={1920}
             height={1080}
