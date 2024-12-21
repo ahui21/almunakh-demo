@@ -28,6 +28,9 @@ function CameraControls() {
       maxDistance={400}
       autoRotate={false}
       makeDefault
+      minPolarAngle={Math.PI / 4}
+      maxPolarAngle={Math.PI / 1.5}
+      target={[0, 0, 0]}
     />
   );
 }
@@ -54,10 +57,16 @@ export function GlobalMap({ className }: GlobalMapProps) {
     <Card 
       className={cn(
         "p-6",
-        "transition-all duration-300 ease-in-out",
-        isFullscreen ? "fixed top-[6rem] left-[16rem] right-4 bottom-4 z-50" : "",
+        "transition-all duration-1000",
+        isFullscreen ? 
+          "fixed top-20 left-56 right-4 bottom-[150rem] z-50 !scale-100 opacity-100" : 
+          "scale-100 opacity-100",
         className
       )}
+      style={{
+        transformOrigin: 'center center',
+        transition: 'all 1000ms cubic-bezier(0.22, 1, 0.36, 1)',
+      }}
     >
       <CardHeader 
         title="Global Overview"
@@ -79,8 +88,8 @@ export function GlobalMap({ className }: GlobalMapProps) {
       <div className="h-[calc(100%-3rem)] rounded-lg overflow-hidden relative">
         <Canvas
           camera={{ 
-            position: [200, 200, 200], 
-            fov: 45,
+            position: [50, 150, 200],
+            fov: 30,
             near: 1,
             far: 1000
           }}

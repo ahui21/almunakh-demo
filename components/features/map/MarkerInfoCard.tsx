@@ -1,11 +1,18 @@
 import { MapMarker } from '@/lib/types/dashboard';
 import { format } from 'date-fns';
 import { Card } from '@/components/ui/card';
+import { scaleLinear } from 'd3-scale';
 
 interface MarkerInfoCardProps {
   marker: MapMarker;
   onClose?: () => void;
 }
+
+// Create a continuous color scale from green to yellow to red
+const colorScale = scaleLinear<string>()
+  .domain([0, 50, 100])
+  .range(['#22c55e', '#eab308', '#ef4444'])  // green -> yellow -> red
+  .clamp(true);
 
 export function MarkerInfoCard({ marker, onClose }: MarkerInfoCardProps) {
   return (
@@ -16,7 +23,13 @@ export function MarkerInfoCard({ marker, onClose }: MarkerInfoCardProps) {
           <h3 className="text-lg font-bold text-white">{marker.name}</h3>
         </div>
         <div className="flex items-center gap-2">
-          <div className="bg-[#E74C3C] text-white text-lg font-bold px-2 py-0.5 rounded">
+          <div 
+            className="text-white text-base font-bold px-1 py-0.25 rounded"
+            style={{ 
+              backgroundColor: colorScale(marker.score),
+              transition: 'background-color 0.2s ease-in-out'
+            }}
+          >
             {marker.score}
           </div>
           <div className="bg-[#4A90E2] text-white px-3 py-0.5 rounded text-sm">
