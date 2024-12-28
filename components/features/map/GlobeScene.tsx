@@ -171,7 +171,7 @@ export function GlobeScene({
       void main() {
         vec3 vNormal = normalize(normalMatrix * normal);
         vec3 vNormel = normalize(normalMatrix * viewVector);
-        intensity = pow(0.6 - dot(vNormal, vNormel), 2.0);
+        intensity = pow(0.8 - dot(vNormal, vNormel), 2.0);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,
@@ -180,7 +180,7 @@ export function GlobeScene({
       varying float intensity;
       void main() {
         vec3 glow = glowColor * intensity;
-        gl_FragColor = vec4(glow, 1.0);
+        gl_FragColor = vec4(glow, 0.5);
       }
     `,
     side: THREE.BackSide,
@@ -241,7 +241,7 @@ export function GlobeScene({
   return (
     <group ref={globeRef}>
       {/* Atmosphere glow */}
-      <mesh geometry={sphereGeometry} material={glowMaterial} scale={1.1} />
+      <mesh geometry={sphereGeometry} material={glowMaterial} scale={1.00} />
       
       {/* Base sphere */}
       <mesh 
@@ -254,7 +254,7 @@ export function GlobeScene({
       {countryGeometries
         .filter((country): country is NonNullable<typeof country> => country !== null)
         .map((country, i) => [
-          // Main border - much thicker and brighter
+          // Main border - brighter and thicker
           <lineSegments key={`border-${i}`}>
             <bufferGeometry>
               <bufferAttribute
@@ -271,30 +271,30 @@ export function GlobeScene({
               />
             </bufferGeometry>
             <lineBasicMaterial
-              color="#FFFFFF"
+              color="#FFFFFF"  // Changed to white for better visibility
               transparent
-              opacity={1.0}     // Full opacity
-              linewidth={48}    // Doubled again
+              opacity={0.8}    // Increased opacity
+              linewidth={24}   // Doubled thickness
             />
           </lineSegments>,
 
-          // Border glow - much larger and more intense
+          // Border glow - larger and more intense
           <lineSegments key={`border-glow-${i}`}>
             <bufferGeometry>
               <bufferAttribute
                 attach="attributes-position"
                 count={country.vertices.length / 3}
                 array={new Float32Array(country.vertices.map((v, i) => 
-                  v * (1 + (i % 3 === 0 ? 0.003 : 0))  // Triple glow size
+                  v * (1 + (i % 3 === 0 ? 0.001 : 0))  // Increased glow size
                 ))}
                 itemSize={3}
               />
             </bufferGeometry>
             <lineBasicMaterial
-              color="#FFFFFF"
+              color="#FFFFFF"  // Changed to white
               transparent
-              opacity={0.6}     // Increased glow opacity
-              linewidth={72}    // Doubled glow width
+              opacity={0.4}    // Increased glow opacity
+              linewidth={36}   // Doubled glow thickness
             />
           </lineSegments>
         ])}
